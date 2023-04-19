@@ -6,4 +6,4 @@ virtualization/
 virtualization/*
 vm_management/unpublished/
 vm_management/scripts/env/*
-
+*.swp
