@@ -1,0 +1,9 @@
+applications/
+emulations/
+isolation/
+security/
+virtualization/
+virtualization/*
+vm_management/unpublished/
+vm_management/scripts/env/*
+
