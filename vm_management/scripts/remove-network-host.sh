@@ -5,11 +5,11 @@ source ./env/globals.sh
 
 
 if [ -z "$1" ]; then
-  echo "Debe proporcionar el nombre del host a eliminar como argumento"
+  echo "You must provide the name of the host you want to delete as an argument"
   exit 1
 fi
 
-# Actualizar la entrada del archivo addresses.xml
+# Update the entry in the addresses.xml file
 xmlstarlet ed -L -u "//ip[@hostname='$1']/@used" -v "False" $xml_address_file
 xmlstarlet ed -L -u "//ip[@hostname='$1']/@hostname" -v "None" $xml_address_file
 

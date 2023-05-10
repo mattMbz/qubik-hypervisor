@@ -12,7 +12,7 @@ new_ip=$(bash $get_ip_address)
 
 # Check if an available IP was found.
 if [ -z "$new_ip" ]; then
-  echo "No hay direcciones IP disponibles"
+  echo "There are no available IP addresses"
   exit 1
 fi
 
