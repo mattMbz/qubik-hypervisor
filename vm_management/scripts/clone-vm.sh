@@ -1,5 +1,8 @@
 #!/bin/bash
 
+## Loading all global variables: files and directories
+source ./env/globals.sh
+
 # check if parameters are received correctly
 # two parematers are mandatory
 if [[ $# -lt 2 ]]; then
@@ -21,7 +24,8 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # Assign the new VM to a Network
-./add-network-host.sh $new_virtual_machine
+# One script for add new host in the network is loaded in add_network_host global variable.
+bash $add_network_host $new_virtual_machine
 
 ## END
 

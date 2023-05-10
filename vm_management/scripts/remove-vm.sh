@@ -15,6 +15,6 @@ ip_address=$(xmlstarlet sel -t -m "//host[@name='$vm_name']/@ip" -v . -n $xml_ne
 # Delete and Unlink the virtual machine from the network
 virsh net-update default delete ip-dhcp-host "<host mac='$mac_address' name='$vm_name' ip='$ip_address'/>" --live --config 
 virsh undefine --remove-all-storage $vm_name
-./remove-network-host.sh $vm_name
+bash $remove_network_host $vm_name
 
 ## END

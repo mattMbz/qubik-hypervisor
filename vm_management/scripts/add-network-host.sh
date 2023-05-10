@@ -2,12 +2,13 @@
 
 # Load Global variables
 # xml file paths
+
 source ./env/globals.sh
 
 # New values for the host.
 vm_name=$1
 mac_address=$(virsh dumpxml $1 | xmlstarlet sel -t -v "//mac/@address")
-new_ip=$(./get-ip-address.sh)
+new_ip=$(bash $get_ip_address)
 
 # Check if an available IP was found.
 if [ -z "$new_ip" ]; then

@@ -3,6 +3,7 @@
 # Get global variables
 source ./env/globals.sh
 
+
 if [ -z "$1" ]; then
   echo "Debe proporcionar el nombre del host a eliminar como argumento"
   exit 1
