@@ -65,7 +65,6 @@ for key in "${!time1_array[@]}"; do
     cpu_total_time=$((delta_idle_cpu + delta_system_cpu))
     proportion_time=$(echo "scale=4; $delta_idle_cpu / $cpu_total_time" | bc)
     cpu_percentage=$(echo "scale=2; (1 - $proportion_time) * 100" | bc)
-    
 
     # Format to two decimal places and add zero if less than zero
     formatted=$(awk -v val="$cpu_percentage" 'BEGIN{ printf "%.2f", val+0 }')
