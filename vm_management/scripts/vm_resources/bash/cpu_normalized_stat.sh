@@ -21,14 +21,21 @@ read_cpu_times() {
     done
 }
 
-#Extract time data only of cpu
+#Extract time data only of cpu0, cpu1, cpu2 ... depend of $1 parameter
 create_time_arrays() {
     while IFS= read -r line; do
         echo $line | grep $1
     done <<< $2
 }
 
-#According to several statistical analyzes carried out on the behavior of this VCPU, the conclusion was obtained that below 20% of use of this VPCU will be considered as idle. Therefore, in this function, the number is received as a parameter and the threshold is compared with the value number. If the threshold is greater than to number, the awk command is used to remove the integer part of the number and get only the decimal part. If the threshold is less than os equal to number, the number is not changed. Then, the number transformed or not, is printed using the echo command.
+# NOTE # # # #
+# According to several statistical analyzes carried out on the behavior of this VCPU, the conclusion was obtained that below
+# 20% of use of this VPCU will be considered as idle. Therefore, in this function, the number is received as a parameter and 
+# the threshold is compared with the value number. If the threshold is greater than to number, the awk command is used to 
+# remove the integer part of the number and get only the decimal part. If the threshold is less than os equal to number, the 
+# number is not changed. Then, the number transformed or not, is printed using the echo command.
+# # # # # # # 
+
 normalize() {
     number=$1
     threshold=20

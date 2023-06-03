@@ -21,7 +21,7 @@ read_cpu_times() {
     done
 }
 
-#Extract time data only of cpu
+#Extract time data only of cpu0, cpu1, cpu2 ... depend of $1 parameter
 create_time_arrays() {
     while IFS= read -r line; do
         echo $line | grep $1
