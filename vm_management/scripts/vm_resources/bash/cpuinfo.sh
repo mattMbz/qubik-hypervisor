@@ -68,7 +68,7 @@ for key in "${!time1_array[@]}"; do
 
     # Format to two decimal places and add zero if less than zero
     formatted=$(awk -v val="$cpu_percentage" 'BEGIN{ printf "%.2f", val+0 }')
-    echo "$key $formatted %"
+    #echo "$key $formatted %"
 
     percentage_array[$key]=$formatted
 done

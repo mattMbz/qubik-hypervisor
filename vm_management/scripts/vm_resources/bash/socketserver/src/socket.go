@@ -38,6 +38,16 @@ func runBash(scriptname string) (string, error) {
 }
 
 func readCPU() (string, error) {
+	getcpuinfo := "cpuinfo.sh"
+	cpuInfo, err := runBash(getcpuinfo)
+	cpuInfo = strings.TrimSpace(cpuInfo)
+	if err != nil {
+		return "", err
+	}
+	return cpuInfo, nil
+}
+
+func readVCPU() (string, error) {
 	getcpuinfo := "cpu_normalized_info.sh"
 	cpuInfo, err := runBash(getcpuinfo)
 	cpuInfo = strings.TrimSpace(cpuInfo)
@@ -85,7 +95,6 @@ func handleConnection(conn net.Conn) {
 		}
 
 		data := string(buffer[:n])
-		fmt.Println("Datos recibidos:", data)
 
 		var response string
 		switch data {
@@ -111,14 +120,12 @@ func handleConnection(conn net.Conn) {
 			fmt.Println(err)
 			return
 		}
-
-		fmt.Println("Respuesta enviada:", response)
 	}
 }
 
 
 func main() {
-	
+
 	scriptname := "host_ip_address.sh"
 	ipaddr, err := runBash(scriptname)
 	ipaddr = strings.TrimSpace(ipaddr) //Clean up white spaces.
