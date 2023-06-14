@@ -9,21 +9,48 @@ import (
 	"os/exec"
 )
 
-func getDiskInfo() {
+func getDiskInfo(){
+	cmd := exec.Command("df", "/")
+	output, err := cmd.Output()
+	if err != nil {
+		fmt.Println("Error al ejecutar el comando:", err)
+		// return nil
+	}
 
+	lines := strings.Split(string(output), "\n")
+	if len(lines) < 2 {
+		fmt.Println("Error: No se pudo obtener la información del disco")
+		// return nil
+	}
+
+	fields := strings.Fields(lines[1])
+	if len(fields) < 6 {
+		fmt.Println("Error: No se pudieron extraer los campos de la salida")
+		// return nil
+	}
+
+	fileSystem := fields[0]
+	size := fields[1]
+	used := fields[2]
+	available := fields[3]
+	percentage := fields[4]
+	mounted := fields[5]
+
+	fmt.Println("{'size': '" + humanize(size) + "', 'used': '" + humanize(used) + "', 'available': '" + humanize(available) + "', 'percentage': '" + percentage + "', 'mounted': '" + mounted + "', 'filesystem': '"+fileSystem+"'}")
 }
 
-func getMemoryValue(memType string) string {
+func readMemInfo(memType string) string {
 	var memorySize []string
 	var memorySizeValue string
 
 	// Read "/proc/meminfo" file
-	meminfoFile, err := ioutil.ReadFile("/proc/meminfo")
-	meminfo := string(meminfoFile)
+	cmd := exec.Command("more", "/proc/meminfo")
+	output, err := cmd.Output()
 	if err != nil {
 		fmt.Println(err)
 	}
-	lines := strings.Split(meminfo, "\n")
+	lines := strings.Split(string(output), "\n")
+
 	for _, line := range lines {
 		if strings.Contains(line, memType){
 			memorySize = strings.Split(line, ":")
@@ -38,22 +65,22 @@ func getMemoryValue(memType string) string {
 }
 
 
-func unit(value string) string {
+func humanize(value string) string {
     /** Function to convert value to human-readable format */
 
-	intValue, _ := strconv.Atoi(value)
+	floatValue, _ := strconv.ParseFloat(value, 64)
 	length := len(value)
 
 	if length > 6 {
-		gb := float64(intValue) / (1024 * 1024)
+		gb := floatValue / (1024 * 1024)
 		roundedValue := fmt.Sprintf("%.2f", gb)
 		return roundedValue + " GB"
 	} else if length >= 4 && length <= 6 {
-		mb := float64(intValue) / 1024
+		mb := floatValue / 1024
 		roundedValue := fmt.Sprintf("%.2f", mb)
 		return roundedValue + " MB"
 	} else {
-		roundedValue := fmt.Sprintf("%.2f", float64(intValue))
+		roundedValue := fmt.Sprintf("%.2f", floatValue)
 		return roundedValue + " KB"
 	}
 }
@@ -61,13 +88,15 @@ func unit(value string) string {
 
 func getMemoryInfo() {
 
-	//total:=getMemoryValue("MemTotal")
-	freeStr:=getMemoryValue("MemFree")
-	buffersStr:=getMemoryValue("Buffers")
-	availableStr:=getMemoryValue("MemTotal")
-	cachedStr:=getMemoryValue("Cached")
-	KReclaimableStr:=getMemoryValue("KReclaimable")
-	hugepagesizeStr:=getMemoryValue("Hugepagesize")
+	//total:=readMemInfo("MemTotal")
+	freeStr:=readMemInfo("MemFree")
+	buffersStr:=readMemInfo("Buffers")
+	availableStr:=readMemInfo("MemTotal")
+	cachedStr:=readMemInfo("Cached")
+	KReclaimableStr:=readMemInfo("KReclaimable")
+	hugepagesizeStr:=readMemInfo("Hugepagesize")
+	pageTablesStr:=readMemInfo("PageTables")
+	kernelStackStr:=readMemInfo("KernelStack")
 
 	//memTotal, err := strconv.Atoi(total)
 	freeInt, err := strconv.Atoi(freeStr)
@@ -76,33 +105,26 @@ func getMemoryInfo() {
 	cachedInt, err := strconv.Atoi(cachedStr)
 	KReclaimableInt, err := strconv.Atoi(KReclaimableStr)
 	hugepagesizeInt, err := strconv.Atoi(hugepagesizeStr)
+	pageTablesInt, err := strconv.Atoi(pageTablesStr)
+	kernellStackInt, err := strconv.Atoi(kernelStackStr)
 
 	if(err != nil) {
 		fmt.Println(err)
 	}
 
-	fmt.Println("memAvailable "+availableStr)
-	fmt.Println("memFree "+freeStr)
-	fmt.Println("buffers "+buffersStr)
-	fmt.Println("cached "+cachedStr)
-	fmt.Println("KReclaimable "+KReclaimableStr)
-	fmt.Println("hugepagesize "+hugepagesizeStr)
-	//fmt.Println("memTotal "+totalStr)
-
 	// Calculate mem_used
-	usedInt := availableInt - freeInt - buffersInt - cachedInt - KReclaimableInt - hugepagesizeInt
+	usedInt := availableInt - freeInt - buffersInt - cachedInt - KReclaimableInt - hugepagesizeInt - pageTablesInt - kernellStackInt
 
 	// Calculate percentage
 	percentage := (usedInt * 100) / availableInt
 	
 	// Convert values to human-readable format
-	usedHuman := unit(strconv.Itoa(usedInt))
-	availableHuman := unit(availableStr)
+	usedHuman := humanize(strconv.Itoa(usedInt))
+	availableHuman := humanize(availableStr)
+	freeHuman := humanize(freeStr)
 
-	fmt.Println(usedInt)
-	fmt.Println(percentage)
-	fmt.Println(usedHuman)
-	fmt.Println(availableHuman)
+	usedPercentage := strconv.Itoa(percentage)
+	fmt.Println("{'percentage': '" + usedPercentage + "%', 'Total': '" + availableHuman + "', 'Used': '" + usedHuman + "', 'Free': '" + freeHuman + "'}")
 
 }
 
@@ -193,7 +215,7 @@ func getCPUInfo() {
 	if err != nil {
 		fmt.Println("Error: ", err)
 		return
-	}
+	} 
 
 	for i:=0; i < len(cpuTimesOne); i++ {
 		systemTime1, _ = strconv.Atoi( cpuTimesOne["cpu"+strconv.Itoa(i)][3] )
@@ -215,7 +237,14 @@ func getCPUInfo() {
 		cpuUsageArray = append(cpuUsageArray, strconv.FormatFloat(percentage, 'f', 2, 64))
 	}
 
-	fmt.Println(cpuUsageArray)
+	cpuDict := "{ "
+	end := "}"
+
+	for i := 0; i < len(cpuUsageArray); i++ {
+		cpuDict = cpuDict+"'"+"cpu"+strconv.Itoa(i)+"':'"+cpuUsageArray[i]+"',"
+	}
+	cpuDict = cpuDict + end
+	fmt.Println(cpuDict)
 	
 }
 
@@ -224,6 +253,7 @@ func runSockerServer(){}
 
 
 func main() {
-	//getCPUInfo()
+	getCPUInfo()
 	getMemoryInfo()
+	getDiskInfo()
 }
