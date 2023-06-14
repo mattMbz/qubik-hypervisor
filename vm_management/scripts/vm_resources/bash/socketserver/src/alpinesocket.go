@@ -7,36 +7,44 @@ import (
 	"strings"
 	"strconv"
 	"os/exec"
+	"net"
 )
 
-func getDiskInfo(){
+const (
+	SERVER_PORT = "8503"
+	SERVER_TYPE = "tcp"
+)
+
+func getDiskInfo() (string, error) {
 	cmd := exec.Command("df", "/")
 	output, err := cmd.Output()
 	if err != nil {
 		fmt.Println("Error al ejecutar el comando:", err)
-		// return nil
+		return "", err
 	}
 
 	lines := strings.Split(string(output), "\n")
 	if len(lines) < 2 {
 		fmt.Println("Error: No se pudo obtener la información del disco")
-		// return nil
+		return "", err
 	}
 
 	fields := strings.Fields(lines[1])
 	if len(fields) < 6 {
 		fmt.Println("Error: No se pudieron extraer los campos de la salida")
-		// return nil
+		return "", err
 	}
 
 	fileSystem := fields[0]
 	size := fields[1]
 	used := fields[2]
 	available := fields[3]
-	percentage := fields[4]
+	percentage := strings.Replace(fields[4], "%", "", -1)
 	mounted := fields[5]
 
-	fmt.Println("{'size': '" + humanize(size) + "', 'used': '" + humanize(used) + "', 'available': '" + humanize(available) + "', 'percentage': '" + percentage + "', 'mounted': '" + mounted + "', 'filesystem': '"+fileSystem+"'}")
+	diskPythonDict := fmt.Sprintf("{'size': '" + humanize(size) + "', 'used': '" + humanize(used) + "', 'available': '" + humanize(available) + "', 'percentage': '" + percentage + "', 'mounted': '" + mounted + "', 'filesystem': '"+fileSystem+"'}")
+
+	return diskPythonDict, nil
 }
 
 func readMemInfo(memType string) string {
@@ -86,7 +94,7 @@ func humanize(value string) string {
 }
 
 
-func getMemoryInfo() {
+func getMemoryInfo() (string, error) {
 
 	//total:=readMemInfo("MemTotal")
 	freeStr:=readMemInfo("MemFree")
@@ -110,6 +118,7 @@ func getMemoryInfo() {
 
 	if(err != nil) {
 		fmt.Println(err)
+		return "", err
 	}
 
 	// Calculate mem_used
@@ -124,8 +133,10 @@ func getMemoryInfo() {
 	freeHuman := humanize(freeStr)
 
 	usedPercentage := strconv.Itoa(percentage)
-	fmt.Println("{'percentage': '" + usedPercentage + "%', 'Total': '" + availableHuman + "', 'Used': '" + usedHuman + "', 'Free': '" + freeHuman + "'}")
 
+	memoryPythonDict := fmt.Sprintf("{'percentage': '" + usedPercentage + "', 'Total': '" + availableHuman + "', 'Used': '" + usedHuman + "', 'Free': '" + freeHuman + "'}")
+
+	return memoryPythonDict, nil
 }
 
 
@@ -192,7 +203,7 @@ func readProcStat() (map[string][]string, error) {
 
 
 // Calculating usage CPU % percentage
-func getCPUInfo() {
+func getCPUInfo() (string, error) {
 	var systemTime1 int
 	var idleTime1 int
 	var systemTimesArray1 []int
@@ -214,7 +225,7 @@ func getCPUInfo() {
 
 	if err != nil {
 		fmt.Println("Error: ", err)
-		return
+		return "", err
 	} 
 
 	for i:=0; i < len(cpuTimesOne); i++ {
@@ -237,23 +248,108 @@ func getCPUInfo() {
 		cpuUsageArray = append(cpuUsageArray, strconv.FormatFloat(percentage, 'f', 2, 64))
 	}
 
-	cpuDict := "{ "
+	cpuPythonDict := "{ "
 	end := "}"
 
 	for i := 0; i < len(cpuUsageArray); i++ {
-		cpuDict = cpuDict+"'"+"cpu"+strconv.Itoa(i)+"':'"+cpuUsageArray[i]+"',"
+		cpuPythonDict = cpuPythonDict+"'"+"cpu"+strconv.Itoa(i)+"':'"+cpuUsageArray[i]+"',"
 	}
-	cpuDict = cpuDict + end
-	fmt.Println(cpuDict)
-	
+	cpuPythonDict = cpuPythonDict + end
+
+	return cpuPythonDict, nil	
 }
 
+func handleConnection(conn net.Conn) {
 
-func runSockerServer(){}
+	defer conn.Close()
 
+	buffer := make([]byte, 1024)
+
+	for {
+		n, err := conn.Read(buffer)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		data := string(buffer[:n])
+
+		var response string
+		switch data {
+		case "cpu":
+			response, err = getCPUInfo()
+		case "memory":
+			response, err = getMemoryInfo()
+		case "disk":
+			response, err = getDiskInfo()
+		// case "all":
+		// 	response, err = readAll()
+		default:
+			response = "Invalid request"
+		}
+
+		if err != nil {
+			fmt.Println(err)
+			response = "Error occurred"
+		}
+
+		_, err = conn.Write([]byte(response))
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+	}
+}
+
+func getIpAddr(ifaceName string) (string, error) {
+	iface, err := net.InterfaceByName(ifaceName)
+	if err != nil {
+		return "", err
+	}
+
+	addrs, err := iface.Addrs()
+	if err != nil {
+		return "", err
+	}
+
+	// Buscar la primera dirección IP válida de la interfaz de red
+	for _, addr := range addrs {
+		ipnet, ok := addr.(*net.IPNet)
+		if ok && !ipnet.IP.IsLoopback() && ipnet.IP.To4() != nil {
+			return ipnet.IP.String(), nil
+		}
+	}
+
+	return "", fmt.Errorf("No se encontró una dirección IP válida para la interfaz de red %s", ifaceName)
+}
 
 func main() {
-	getCPUInfo()
-	getMemoryInfo()
-	getDiskInfo()
+
+	ifaceName := "eth0"
+	//ifaceName := "enp0s3"
+	ipaddr, err := getIpAddr(ifaceName)
+	if err != nil {
+		fmt.Printf("Error al obtener la dirección IP de %s: %s\n", ifaceName, err)
+		return
+	}
+
+	server, err := net.Listen(SERVER_TYPE, ipaddr+":"+SERVER_PORT)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	defer server.Close()
+
+	fmt.Println("Listening in host " + ipaddr + " on port " + SERVER_PORT)
+
+	for {
+		conn, err := server.Accept()
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+
+		go handleConnection(conn)
+	}
 }
