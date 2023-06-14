@@ -99,7 +99,7 @@ func handleConnection(conn net.Conn) {
 		var response string
 		switch data {
 		case "cpu":
-			response, err = readCPU()
+			response, err = readVCPU()
 		case "memory":
 			response, err = readMemory()
 		case "disk":
