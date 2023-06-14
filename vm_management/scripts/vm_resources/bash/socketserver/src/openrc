@@ -1,0 +1,20 @@
+#!/sbin/openrc-run
+
+command="/usr/local/bin/qubik/alpinesocket"
+command_user="root"
+
+depend() {
+    need net
+    use logger
+}
+
+start() {
+    ebegin "Starting Socket Server"
+    start-stop-daemon --start --background --exec $command --user $command_user
+    eend $?
+}
+
+stop() {
+    ebegin "Stopping Socket Server"
+    start-stop-daemon --stop --exec $command
+    eend $?
