@@ -1,4 +1,4 @@
-applications/
+### Qubik Hypervisor ###
 emulations/
 isolation/
 security/
@@ -7,6 +7,14 @@ virtualization/*
 vm_management/unpublished/
 vm_management/scripts/env/*
 *.swp
+
+### Django Web application ###
+.venv
+.vscode
+settings.json
+__pycache__
+*.sqlite3
+settings.py
 
 ### Go ###
 # Directories

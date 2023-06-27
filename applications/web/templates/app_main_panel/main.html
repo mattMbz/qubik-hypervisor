@@ -1,0 +1,18 @@
+{% extends "../base.html" %}
+
+{% block title %}Main Panel{% endblock title %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+    <h1>Hola {{ user.username }}</h1>
+    <p>Aquí puedes administrar todas tus maquinas virtuales y crear proyectos espectaculares !</p>
+    <b>Clave: </b> <span>4253</span> <br>
+    <b>Info:</b> <span style="color: red;">Información super sensible !!!</span>
+    <br> <br>
+    <a href="{% url 'logout' %}">Cerrar sesión</a>
+{% else %}
+    {% include 'app_main_panel/welcome.html' %}
+{% endif %}
+
+{% endblock content %}
