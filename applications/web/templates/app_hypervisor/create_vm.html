@@ -1,0 +1,46 @@
+{% extends '../base.html' %}
+{% load static %}
+
+{% block content %}
+{% include '../navbar.html' %}
+<div class="container mt-3">
+    <div class="row justify-content-center">
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-body">
+            <div class="center-line mb-4">
+              <img src="{% static 'images/add.png' %}" alt="Icono">
+              <span class="ml-2 fs-5 d-none d-md-inline">Create new virtual machine</span>
+              <span class="ml-2 fs-5 d-inline d-md-none">Create new VM</span>
+            </div>
+            <form action="" method="POST" novalidate>
+                {% csrf_token %}
+                <label class="form-label">{{ form.virtualMachineName.label }}</label>
+                <div style="{% if form.virtualMachineName.errors %}border:solid 1px red; border-radius:6px;{% endif %}">
+                  {{ form.virtualMachineName }}
+                </div>
+                <div class="errorlist">
+                  {% for error in form.virtualMachineName.errors %}
+                    <span class='text-danger'>{{ error }}</span>
+                  {% endfor %}
+                </div>
+                <label class="form-label mt-3">{{ form.applicationName.label }}</label>
+                {{ form.applicationName }}
+                <label class="form-label mt-3">{{ form.version.label }}</label>
+                {{ form.version }}
+                <label class="form-label mt-3">{{ form.locationHost.label }}</label>
+                {{ form.locationHost }}
+                <label class="form-label mt-3">{{ form.hardware.label }}</label>
+                {{ form.hardware }}
+                
+                <hr class='mt-5'>
+
+                <button type="submit" class="btn btn-primary ">Create new VM</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+

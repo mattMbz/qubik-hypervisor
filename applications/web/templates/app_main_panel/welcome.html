@@ -1,6 +1,21 @@
+{% load static %}
+
 {% block content %}
-<h1>Qubik Hypervisor version 0.1</h1>
-<br>
-<li><a href={% url 'signin' %}>Inciar sesión</a></li> <br>
-<li><a href={% url 'signup' %}>Crear una cuenta</a></li>
+<div class="container text-center mt-5">
+    <div>
+        <img src="{% static '/images/qubik-logo.svg' %}" alt="Logo">
+    </div>
+    <code class="mt-5">Version 0.1</code>
+    <h2 class="mt-5">Welcome!</h2>
+
+    <p class="lead">
+        Qubik Hypervisor is a web application for managing your virtual machines.
+    </p>
+    <p>
+        <a href="{% url 'signin' %}">Sign in</a> if you're already registered!
+    </p>
+    <p>
+        Get <a href="#">more information</a> about this project.
+    </p>
+</div>
 {% endblock content %}

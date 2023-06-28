@@ -6,7 +6,7 @@ from django.shortcuts import redirect
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 from utils.validations import no_cache_render
 
-
+@login_required
 def signup(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -33,8 +33,9 @@ def signin(request):
             login(request, user)
             return redirect('mainpanel')
         else: 
-            messages.error(request, ' <strong>&#9888</strong> Wrong username or password !')
-            return redirect('signin')
+            if (request.POST['password'] != '' or request.POST['username'] != ''):
+                messages.error(request, ' <strong>&#9888</strong> Wrong username or password !')
+                return redirect('signin')
     else:
         form = CustomAuthenticationForm()
 
@@ -45,5 +46,5 @@ def signin(request):
 @login_required
 def logout_view(request):
     logout(request)
-    return redirect('signin')
+    return redirect('/')
 #End_def

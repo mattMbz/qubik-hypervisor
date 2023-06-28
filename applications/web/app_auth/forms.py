@@ -7,7 +7,7 @@ from django.utils.translation import gettext as _
 class CustomUserCreationForm(UserCreationForm):
     error_messages = {
         'password_mismatch': _("Passwords do not match. Please enter the same password in both fields."),
-        'required': _("Este texto es requerido."),
+        'required': _("This text is required."),
     }
 
     username = forms.CharField(
@@ -58,7 +58,8 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('username', 'password1', 'password2')
-##
+
+##End_class
 
 
 class CustomAuthenticationForm(AuthenticationForm):
@@ -75,14 +76,9 @@ class CustomAuthenticationForm(AuthenticationForm):
         )
     )
 
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     self.fields['username'].widget.attrs['autocomplete'] = 'off'
-    #     self.fields['password'].widget.attrs['autocomplete'] = 'off'
-
     def clean(self):
         cleaned_data = super().clean()
-        # Aquí puedes realizar validaciones adicionales en el backend si es necesario
+        # Here you can perform additional validations on the backend if necessary
         return cleaned_data
     #end_def
 
