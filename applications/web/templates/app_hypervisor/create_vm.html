@@ -3,7 +3,23 @@
 
 {% block content %}
 {% include '../navbar.html' %}
-<div class="container mt-3">
+{% comment %} <div class="messages">
+  {% if messages %}
+    {% for message in messages %}
+      <div 
+        {% if "error" in message.tags %} 
+          class="alert alert-danger alert-dismissible fade show" 
+        {%else%}
+          class="alert alert-{{ message.tags }} alert-dismissible fade show"
+        {% endif %} 
+      >
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        {{ message|safe }}
+      </div>
+    {% endfor %}
+  {% endif %}
+</div> {% endcomment %}
+<div class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-lg-6">
         <div class="card">
@@ -33,6 +49,22 @@
                 <label class="form-label mt-3">{{ form.hardware.label }}</label>
                 {{ form.hardware }}
                 
+                {% if messages %}
+                  {% for message in messages %}
+                    <div 
+                      {% if "error" in message.tags %} 
+                        class="text text-danger mt-4" 
+                      {%else%}
+                        class="text text-{{ message.tags }} mt-4"
+                      {% endif %} 
+                    >
+                      {{ message|safe }}
+                    </div>
+                  {% endfor %}
+                {% else %}
+                    <div class="mt-4" style="height: 24px"></div>
+                {% endif %}
+
                 <hr class='mt-5'>
 
                 <button type="submit" class="btn btn-primary ">Create new VM</button>

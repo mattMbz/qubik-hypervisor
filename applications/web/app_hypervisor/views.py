@@ -1,4 +1,6 @@
+from django.contrib import messages
 from django.shortcuts import redirect
+from django.urls import reverse
 
 from utils.validations import no_cache_render
 from .models import virtual_machines
@@ -18,7 +20,6 @@ def create_virtual_machine(request):
         print('post form')
         print(form.is_valid())
         if form.is_valid():
-            print('is valid !!!')
             # Procesa los datos del formulario aquí
             virtual_machine_name = form.cleaned_data['virtualMachineName']
             application_name = form.cleaned_data['applicationName']
@@ -28,7 +29,11 @@ def create_virtual_machine(request):
             # Haz algo con los datos, como guardarlos en la base de datos
 
             # Redirige al usuario a alguna página de éxito
-            # return redirect('nombre_app:exito')
+            messages.success(request, '&#128516; New virtual machine has been created successfully! ')
+            # go_to_url = reverse('mainpanel')
+            # go_to_message = f"Go to <a href='{go_to_url}'>Main panel</a>"
+            # messages.success(request, go_to_message, extra_tags='safe')
+            # return redirect('create-vm')
     else:
         form = CreateVirtualMachineForm()
 
