@@ -23,11 +23,11 @@ class CreateVirtualMachineForm(forms.Form):
     applicationName = forms.CharField(
         required=False,
         label='Application Name',
-        max_length=20,
+        max_length=15,
         widget= forms.TextInput(
             attrs = {
                 "autocomplete": "off",
-                "class": "form-control",
+                "class": "form-control ",
                 "id": 'applicationName'
             }
         )
@@ -66,6 +66,7 @@ class CreateVirtualMachineForm(forms.Form):
         ('Alpine Linux : 3', 'Alpine Linux | 2 CPU | 768 MB (RAM) | 2 GB (Disk)'),
     ]
 
+
     hardware = forms.ChoiceField(
         required=False,
         choices=hardware_choices,
@@ -75,7 +76,7 @@ class CreateVirtualMachineForm(forms.Form):
                 "class": "form-select",
                 "id": 'hardware'
             }
-        )
+        ),
     )
 
 
