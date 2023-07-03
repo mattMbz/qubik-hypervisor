@@ -1,30 +1,35 @@
-# from django.db import models
+from django.db import models
+from django.contrib.auth.models import User
 
-import uuid
 
-virtual_machines = [
-    {
-     'name':'nodejs-app', 
-     'id': str(uuid.uuid4()).split('-')[4],
-     'status': 'ON',
-     'appName':'siu guaraní 3.17',
-     'version':'3.17',
-     'vcpu':'4',
-     'vram':'4',
-     'vdisk':'10',
-    },
-    {
-     'name':'Debian10-vm', 
-     'id': str(uuid.uuid4()).split('-')[4],
-     'status':'ON',
-    },
-    {
-        'name':'flaskapi',  
-        'id': str(uuid.uuid4()).split('-')[4],
-        'status': 'ON'
-    },
-    {'name':'vm-universidad', 'id': str(uuid.uuid4()).split('-')[4], 'status': 'ON'},
-    {'name':'vm-universidad', 'id': str(uuid.uuid4()).split('-')[4], 'status': 'ON'},
-    {'name':'vm-universidad', 'id': str(uuid.uuid4()).split('-')[4], 'status': 'ON'},
-    {'name':'vm-universidad', 'id': str(uuid.uuid4()).split('-')[4], 'status': 'ON'}
-]
+class VirtualMachine(models.Model):
+    name = models.CharField(max_length=100)
+    appname = models.CharField(max_length=100)
+    appversion = models.CharField(max_length=15)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+#End_class
+
+
+class Resources(models.Model):
+    os = models.CharField(max_length=50)
+    vcpu = models.CharField(max_length=15)
+    vram = models.CharField(max_length=15)
+    vdisk = models.CharField(max_length=15)
+    virtualmachines = models.ManyToManyField(VirtualMachine)
+
+    def __str__(self):
+        return self.os
+#End_class
+
+
+class Services(models.Model):
+    choice = models.CharField(max_length=60)
+    description = models.CharField(max_length=60)
+
+    def __str__(self):
+        return self.description
+#End_class
+

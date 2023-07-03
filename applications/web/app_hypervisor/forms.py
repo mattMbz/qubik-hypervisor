@@ -1,6 +1,6 @@
 import re
 from django import forms
-
+from app_hypervisor.models import Services
 
 class CreateVirtualMachineForm(forms.Form):
 
@@ -60,16 +60,20 @@ class CreateVirtualMachineForm(forms.Form):
         )
     )
 
-    hardware_choices = [
-        ('Debian Linux : 1', 'Debian Linux | 2 CPU | 768 MB (RAM) | 4 GB (Disk)'),
-        ('Alpine Linux : 2', 'Alpine Linux | 2 CPU | 768 MB (RAM) | 1 GB (Disk)'),
-        ('Alpine Linux : 3', 'Alpine Linux | 2 CPU | 768 MB (RAM) | 2 GB (Disk)'),
-    ]
+
+    def load_choiceField():
+        hardware_choices = []
+        for service in Services.objects.all().values():
+            row = (service['choice'], service['description'])
+            hardware_choices.append(row)
+        
+        return hardware_choices
+    #End_def
 
 
     hardware = forms.ChoiceField(
         required=False,
-        choices=hardware_choices,
+        choices=load_choiceField(),
         label='Select Hardware',
         widget=forms.Select(
             attrs = {

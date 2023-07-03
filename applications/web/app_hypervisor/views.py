@@ -1,9 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import redirect
-from django.urls import reverse
 
 from utils.validations import no_cache_render
-from .models import virtual_machines
 from .forms import CreateVirtualMachineForm
 
 def monitor(request):
@@ -17,8 +15,6 @@ def tasks(request):
 def create_virtual_machine(request):
     if request.method == 'POST':
         form = CreateVirtualMachineForm(request.POST)
-        print('post form')
-        print(form.is_valid())
         if form.is_valid():
             # Procesa los datos del formulario aquí
             virtual_machine_name = form.cleaned_data['virtualMachineName']
@@ -27,13 +23,17 @@ def create_virtual_machine(request):
             hardware = form.cleaned_data['hardware']
             
             # Haz algo con los datos, como guardarlos en la base de datos
+            print(f'vm name: {virtual_machine_name}')
+            print(f'app name: {application_name}')
+            print(f'version: {version}')
+            print(f'hardware: {hardware}')
 
             # Redirige al usuario a alguna página de éxito
             messages.success(request, '&#128516; New virtual machine has been created successfully! ')
             # go_to_url = reverse('mainpanel')
             # go_to_message = f"Go to <a href='{go_to_url}'>Main panel</a>"
             # messages.success(request, go_to_message, extra_tags='safe')
-            # return redirect('create-vm')
+            return redirect('create-vm')
     else:
         form = CreateVirtualMachineForm()
 
@@ -42,6 +42,4 @@ def create_virtual_machine(request):
 
 def delete(request):
 
-    return no_cache_render(request, 'app_hypervisor/delete_vm.html', {
-        'virtual_machines': virtual_machines
-    })
+    return no_cache_render(request, 'app_hypervisor/delete_vm.html', {})

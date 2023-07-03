@@ -15,6 +15,13 @@ settings.json
 __pycache__
 *.sqlite3
 settings.py
+migrations/
+
+### Typescript ###
+node_modules/
+dist/
+package-lock.json
+package.json
 
 ### Go ###
 # Directories
