@@ -1,23 +1,29 @@
 import uuid
 
 from django.contrib import messages
-from django.shortcuts import redirect
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from django.utils import timezone
+from django.shortcuts import redirect
 
 from utils.validations import no_cache_render
 from .forms import CreateVirtualMachineForm
 from .models import VirtualMachine, Resources, Services
 
 
+@login_required
 def monitor(request):
     return no_cache_render(request, 'app_hypervisor/monitor.html', {})
+#End_def
 
 
+@login_required
 def tasks(request):
     return no_cache_render(request, 'app_hypervisor/tasks.html', {})
+#End_def
 
 
+@login_required
 def create_virtual_machine(request):
     if request.method == 'POST':
         form = CreateVirtualMachineForm(request.POST)
@@ -53,13 +59,13 @@ def create_virtual_machine(request):
                 print(new_vm_resources)
 
                 vm_user =  User.objects.get(username=user.username)
-                vm = VirtualMachine.objects.create(
+                VirtualMachine.objects.create(
                     id = uuid.uuid1(),
                     name = virtual_machine_name,
                     app_name = application_name,
                     user = vm_user,
                     resources = new_vm_resources,
-                    creation = timezone.now()
+                    creation_date = timezone.now()
                 )
 
                 chosen_service.users.add(vm_user)
@@ -74,8 +80,10 @@ def create_virtual_machine(request):
         form = CreateVirtualMachineForm()
 
     return no_cache_render(request, 'app_hypervisor/create_vm.html', {'form': form})
+#End_def
 
 
+@login_required
 def delete(request):
     if request.method == 'POST':
         print('Receiving data')
@@ -83,3 +91,4 @@ def delete(request):
         'virtual_machines': VirtualMachine.objects.all()
     }
     return no_cache_render(request, 'app_hypervisor/delete_vm.html', context=context)
+#End_def
