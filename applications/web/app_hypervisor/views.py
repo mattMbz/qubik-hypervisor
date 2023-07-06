@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.contrib.auth.models import User
