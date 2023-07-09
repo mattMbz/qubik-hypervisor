@@ -1,15 +1,25 @@
+# Python utilities
 import uuid
 
+# Django utilities
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.utils import timezone
 from django.shortcuts import redirect
 
+# Own libraries and functions
 from utils.validations import no_cache_render
+
+# Custom form
 from .forms import CreateVirtualMachineForm
+
+# hypervisor app models
 from .models import VirtualMachine, Resources, Services
 
+
+## app_hypervisor application views
 
 @login_required
 def monitor(request):
@@ -84,11 +94,24 @@ def create_virtual_machine(request):
 
 
 @login_required
-def delete(request):
-    if request.method == 'POST':
-        print('Receiving data')
-    context = {
-        'virtual_machines': VirtualMachine.objects.all()
-    }
-    return no_cache_render(request, 'app_hypervisor/delete_vm.html', context=context)
+def remove(request, vm_uuid=None):
+    if vm_uuid is None and request.method=='GET':
+        
+        user = request.user
+        username = user.username
+
+        if user.is_authenticated:
+            context = {
+                'virtual_machines': VirtualMachine.objects.filter(user=user)
+            }
+            return no_cache_render(request, 'app_hypervisor/remove_vm.html', context=context)
+    
+    elif request.method=='DELETE':
+        try:
+            virtual_machine = VirtualMachine.objects.get(id=uuid.UUID(vm_uuid))
+            virtual_machine.delete()
+            print(f'Deleted >> {vm_uuid}')
+            return JsonResponse({'status':f'{vm_uuid}', 'message':'Virtual Machine deleted successfully'})
+        except VirtualMachine.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Error'})
 #End_def

@@ -1,0 +1,41 @@
+{% extends '../base.html' %}
+{% load static %}
+
+{% block title %}Remove VM{% endblock title %}
+
+{% block content %}
+{% include '../navbar.html' %}
+<div class="container mt-3">
+  <div class="row justify-content-center">
+    <div class="col-lg-6">
+      <div class="card px-3">
+        <div class="card-body">
+          <div class="center-line mb-4">
+            <img src="{% static 'images/trash.png' %}" alt="Icono">
+            <span class="ml-2 fs-5">Remove Virtual Machine</span>
+          </div>
+        </div>
+        <form class="d-flex mb-5" method='POST'>
+          <span class="input-group-text" id="basic-addon1">&#128269; </span>
+          <input class="form-control me-2" type="text" placeholder="Search">
+        </form>
+        <ul class="list-group list-group-flush list-to-remove">
+          {% csrf_token %}
+          {% for vm in virtual_machines %}
+            <li class="list-group-item" id="{{vm.id}}">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <div class="fs-5">{{vm.name}}</div>
+                  <div class="lead">ID: {{vm.id}}</div>
+                </div>
+                <button type="button" class="btn-close close"></button>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="{% static 'js/removeVirtualMachine/handler.js' %}"></script>
+{% endblock content %}
