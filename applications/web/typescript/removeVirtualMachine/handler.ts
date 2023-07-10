@@ -5,11 +5,13 @@ export class HandlerToRemoveVM {
 
     private container: HTMLElement;
     private buttons: NodeListOf<Element>;
-    private requestHandler: RequestHandler = new RequestHandler();
+    private requestHandler: RequestHandler;
 
     constructor(containerSelector: string, buttonSelector: string) {
         this.container = document.querySelector(containerSelector) as HTMLElement;
         this.buttons = this.container.querySelectorAll(buttonSelector);
+        this.requestHandler = new RequestHandler();
+        this.fetchOnClick = this.fetchOnClick.bind(this);
     }
  
     private async fetchOnClick(event: Event) {
