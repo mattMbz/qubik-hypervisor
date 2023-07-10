@@ -1,7 +1,7 @@
 import { RequestHandler } from '../http/requests';
 
 
-class HandlerToRemoveVM {
+export class HandlerToRemoveVM {
 
     private container: HTMLElement;
     private buttons: NodeListOf<Element>;
@@ -28,6 +28,3 @@ class HandlerToRemoveVM {
     }
 
 } // End_class
-
-const handlerToRemoveVirtualMachine = new HandlerToRemoveVM('.container', '.close');
-handlerToRemoveVirtualMachine.addEventListeners();
