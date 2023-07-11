@@ -15,14 +15,14 @@
             <span class="ml-2 fs-5">Delete Virtual Machine</span>
           </div>
         </div>
-        <form class="d-flex mb-5" method='POST'>
-          <span class="input-group-text" id="basic-addon1">&#128269; </span>
-          <input class="form-control me-2" type="text" placeholder="Search">
+        <form class="d-flex mb-5">
+          {% comment %} <span class="input-group-text" id="basic-addon1">&#128269; </span> {% endcomment %}
+          <input class="form-control" id="searcherInput" type="text" placeholder="Search for names ...">
         </form>
         <ul class="list-group list-group-flush list-to-remove">
           {% csrf_token %}
           {% for vm in virtual_machines %}
-            <li class="list-group-item" id="{{vm.id}}">
+            <li class="list-group-item vm-item" id="{{vm.id}}">
               <div class="d-flex justify-content-between">
                 <div>
                   <div class="fs-5 vm-name">{{vm.name}}</div>
