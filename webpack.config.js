@@ -6,6 +6,10 @@ module.exports = {
     mainPanel: './applications/web/typescript/mainPanel/main.ts',
     removeVirtualMachine: './applications/web/typescript/removeVirtualMachine/main.ts',
   },
+  watch: true,
+  watchOptions: {
+    ignored: /node_modules/,
+  },
   output: {
       filename: '[name]/bundle.js',
       path: path.resolve(__dirname, './applications/web/static/js'),

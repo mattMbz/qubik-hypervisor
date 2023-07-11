@@ -32,7 +32,6 @@ export class RequestHandler {
         if (res.status !== 200) {
             console.log(data.message , data.status);
         } else {
-            console.log(data.status);
             return data.status;
         }
     }
