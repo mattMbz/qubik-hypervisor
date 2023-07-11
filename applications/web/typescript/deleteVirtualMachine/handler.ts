@@ -1,7 +1,7 @@
 import { RequestHandler } from '../http/requests';
 
 
-export class HandlerToRemoveVM {
+export class HandlerToDeleteVM {
 
     private container: HTMLElement;
     private buttons: NodeListOf<Element>;
@@ -16,10 +16,10 @@ export class HandlerToRemoveVM {
 
     private modalAlert(): Promise<boolean> {
         return new Promise((resolve) => {
-          const removeButton = document.getElementById('confirm') as HTMLButtonElement;
+          const deleteButton = document.getElementById('confirm') as HTMLButtonElement;
           const cancelButton = document.getElementById('cancel') as HTMLButtonElement;
 
-          removeButton.addEventListener('click', function() {
+          deleteButton.addEventListener('click', function() {
             resolve(true);
           });
           cancelButton.addEventListener('click', function() {

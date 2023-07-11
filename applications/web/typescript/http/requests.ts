@@ -4,8 +4,8 @@ export class RequestHandler {
 
     private getEndpoint(parameter: string | number ): string {
         const HTTPSERVER = process.env.HTTPSERVER;
-        const REMOVE_VM_ENDPOINT = process.env.REMOVE_VM_ENDPOINT;
-        const endpoint = (parameter: any) => `${HTTPSERVER}/${REMOVE_VM_ENDPOINT}/${parameter}`;
+        const DELETE_VM_ENDPOINT = process.env.DELETE_VM_ENDPOINT;
+        const endpoint = (parameter: any) => `${HTTPSERVER}/${DELETE_VM_ENDPOINT}/${parameter}`;
         return endpoint(parameter);
     }
 

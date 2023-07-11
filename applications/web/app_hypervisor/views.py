@@ -94,7 +94,7 @@ def create_virtual_machine(request):
 
 
 @login_required
-def remove(request, vm_uuid=None):
+def delete(request, vm_uuid=None):
     if vm_uuid is None and request.method=='GET':
         
         user = request.user
@@ -104,7 +104,7 @@ def remove(request, vm_uuid=None):
             context = {
                 'virtual_machines': VirtualMachine.objects.filter(user=user)
             }
-            return no_cache_render(request, 'app_hypervisor/remove_vm.html', context=context)
+            return no_cache_render(request, 'app_hypervisor/delete_vm.html', context=context)
     
     elif request.method=='DELETE':
         try:

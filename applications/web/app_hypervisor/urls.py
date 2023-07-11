@@ -7,6 +7,6 @@ urlpatterns = [
     path("monitor/", views.monitor, name="monitor"),
     path("tasks/", views.tasks, name="tasks"),
     path("create-vm/", views.create_virtual_machine, name="create-vm"),
-    path("remove-vm/", views.remove, name="remove-vm"),
-    path("remove-vm/<str:vm_uuid>", views.remove, name='remove-vm-with-id')
+    path("delete-vm/", views.delete, name="delete-vm"),
+    path("delete-vm/<str:vm_uuid>", views.delete, name='delete-vm-with-id')
 ]
