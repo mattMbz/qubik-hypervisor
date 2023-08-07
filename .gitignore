@@ -2,6 +2,7 @@
 emulations/
 isolation/
 security/
+pruebas/
 virtualization/
 virtualization/*
 vm_management/unpublished/
@@ -17,13 +18,17 @@ __pycache__
 settings.py
 migrations/
 js/
+applications/web/app_tlk/.env
 
 ### Typescript ###
 node_modules/
 dist/
 package-lock.json
 package.json
-.env
+#.env
+.env.development
+.env.production
+setenv.sh
 tsconfig.private.json
 
 ### Go ###

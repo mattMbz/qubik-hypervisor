@@ -1,6 +1,4 @@
-function welcome(version: string): void {
-    console.log(`Qubik hypervisor, ${version}`);
-}
+import {HandlerToMainPanel} from './handlers';
 
-let version = "1.x.x";
-welcome(version);
+const handlerToMainPanel = new HandlerToMainPanel();
+handlerToMainPanel.addEventListenersForToggleSwitches();

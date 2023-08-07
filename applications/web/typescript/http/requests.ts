@@ -1,15 +1,14 @@
-export class RequestHandler {
-    
-    constructor(){}
+abstract class HttpRequestHandler {
 
-    private getEndpoint(parameter: string | number ): string {
-        const HTTPSERVER = process.env.HTTPSERVER;
-        const DELETE_VM_ENDPOINT = process.env.DELETE_VM_ENDPOINT;
-        const endpoint = (parameter: any) => `${HTTPSERVER}/${DELETE_VM_ENDPOINT}/${parameter}`;
-        return endpoint(parameter);
+    protected method: string;
+
+    constructor(method: string){
+        this.method = method;
     }
 
-    public async makeRequest(method: 'DELETE' | 'POST', parameter: string, body: any) {
+    protected abstract getEndpoint(action: string, parameter: string | number ): string;
+
+    protected async makeRequest(body: any, endpoint: string) {
         let headers = {
             'X-Requested-With': 'XMLHttpRequest',
             'Content-Type': 'application/json',
@@ -20,9 +19,9 @@ export class RequestHandler {
         const csrfElement = document.querySelector('[name=csrfmiddlewaretoken]') as HTMLInputElement;
         const csrf: string = csrfElement?.value || '';
         headers['X-CSRFToken'] =  csrf;
-
-        const res = await fetch(this.getEndpoint(parameter), {
-            method: method,
+  
+        const res = await fetch(endpoint, {
+            method: this.method,
             headers: headers,
             body: body
         });
@@ -32,8 +31,58 @@ export class RequestHandler {
         if (res.status !== 200) {
             console.log(data.message , data.status);
         } else {
-            return data.status;
+            // console.log(data);
+            return data;
         }
     }
+} /**End_class */
 
-} /** End_class */
+
+export class DeleteRequest extends HttpRequestHandler {
+
+    constructor() {
+        super('DELETE')
+    }
+
+    getEndpoint(parameter?: string | number ): string {
+        const HTTPSERVER = process.env.HTTPSERVER;
+        const DELETE_VM_ENDPOINT = process.env.DELETE_VM_ENDPOINT;
+        const endpoint = (parameter: any) => `${HTTPSERVER}/${DELETE_VM_ENDPOINT}/${parameter}`;
+        return endpoint(parameter);
+    }
+
+    public async request(body: any, parameter?: string,){ 
+        const endpoint = this.getEndpoint(parameter)
+        return await this.makeRequest(body, endpoint)
+    }
+
+} /**End_class */
+
+
+export class PostRequest extends HttpRequestHandler {
+
+    constructor() {
+        super('POST')
+    }
+
+    protected getEndpoint( action: string, parameter?: string | number ): string {
+        const HTTPSERVER = process.env.HTTPSERVER;
+        let endpoint: string;
+
+        if (action =='start'){
+            endpoint = process.env.START_VM_ENDPOINT as string;
+        } else if (action=='shutdown') {
+            endpoint = process.env.SHUTDOWN_VM_ENDPOINT as string;
+        }
+
+        const buildEndpoint = (parameter: any) => `${HTTPSERVER}/${endpoint}/${parameter}`;
+        return buildEndpoint(parameter);
+    }
+
+    public async request(body: any, parameter?: string) {
+        const endpoint = this.getEndpoint(body.action, parameter);
+        const response = await this.makeRequest(body, endpoint)
+        console.log(`Recibido <- ${response}`);
+    }
+
+} /**End_class */

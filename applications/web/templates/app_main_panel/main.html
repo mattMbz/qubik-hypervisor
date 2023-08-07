@@ -30,11 +30,12 @@
         {% endif %}
 
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mt-3">
+            {% csrf_token %}
             {% for vm in virtual_machines %}
             <div class="col h-100">
-                <div class="card">
+                <div class="card vm-component" id={{vm.id}}>
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <span>{{vm.name}}</span>
+                        <span>{{vm.resources.os}}</span>
                         <span class="dropdown">
                             <button
                                 type="button"
@@ -55,13 +56,27 @@
                         </span>
                     </div>
                     <div class="card-body">
-                        <div>
-                            <span>id:{{vm.id}}</span>
+                        <div class="virtual-machine-{{vm.id}} vm-info">
+                            <div>💫 {{vm.name}}</div>
+                            <a href="#">Open application</a>
                         </div>
-                        <div class="text-success">{{vm.status}}</div>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="toggleSwitch" checked>
-                            <label class="form-check-label" for="toggleSwitch"></label>
+                        <hr>
+                        <div class='d-flex justify-content-between'>
+                            <span class="form-check form-switch">
+                                <input
+                                class="form-check-input" 
+                                type="checkbox" 
+                                id="toggle-{{vm.id}}"
+                                {% if vm.state %}checked{% endif %}
+                                />
+                            </span>
+                            <span class="on-off-{{vm.id}}">
+                                {% if vm.state %}
+                                <span class="badge bg-success">Power ON</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Power OFF</span>
+                                {% endif %}
+                            </span>
                         </div>
                     </div>
                 </div>

@@ -17,6 +17,10 @@
   align-items: center;
 }
 
+.navbar-nav {
+  --bs-nav-link-hover-color: #FFEB3B;
+}
+
 #searcherInput {
   background-image: url('../images/searchicon.png'); /* Add a search icon to input */
   background-position: 10px 12px; /* Position the search icon */
@@ -26,4 +30,8 @@
   padding: 12px 20px 12px 40px; /*Add some padding*/
   border: 1px solid #ddd; /* Add a grey border */
   margin-bottom: 12px; /* Add some space below the input */
+}
+
+.vm-info {
+  height: 48px;
 }

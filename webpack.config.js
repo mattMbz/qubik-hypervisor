@@ -2,6 +2,7 @@ const path = require('path');
 const Dotenv = require('dotenv-webpack');
 
 module.exports = {
+  mode: 'production', // O 'development' accorde the case
   entry: {
     mainPanel: './applications/web/typescript/mainPanel/main.ts',
     deleteVirtualMachine: './applications/web/typescript/deleteVirtualMachine/main.ts',
@@ -11,32 +12,46 @@ module.exports = {
     ignored: /node_modules/,
   },
   output: {
-      filename: '[name]/bundle.js',
-      path: path.resolve(__dirname, './applications/web/static/js'),
-      libraryTarget: 'umd',
+    filename: '[name]/bundle.js',
+    path: path.resolve(__dirname, './applications/web/static/js'),
+    libraryTarget: 'umd',
   },
   module: {
     rules: [
       {
         test: /\.ts$/,
         use: [
-            {
-              loader: 'babel-loader',
-              options: {
-                presets: [
-                    '@babel/preset-env',
-                    '@babel/preset-typescript',
-                ],
-              },
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                '@babel/preset-env',
+                '@babel/preset-typescript',
+              ],
             },
-            'ts-loader',
+          },
+          'ts-loader',
         ],
         exclude: /node_modules/,
       },
     ],
   },
+  optimization: {
+    minimize: true, // Optimization for production code.
+    splitChunks: {
+      cacheGroups: {
+        commons: {
+          name: 'commons',
+          chunks: 'all',
+          minChunks: 2,
+        },
+      },
+    },
+  },
   plugins: [
-    new Dotenv(),
+    new Dotenv({
+      path: `./.env.${process.env.NODE_ENV}`,
+    }),
   ],
   resolve: {
     extensions: ['.ts', '.js'],

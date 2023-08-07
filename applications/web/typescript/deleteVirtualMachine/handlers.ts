@@ -1,18 +1,18 @@
-import { RequestHandler } from '../http/requests';
+import { DeleteRequest } from '../http/requests';
 
 
 export class HandlerToDeleteVM {
 
     private container: HTMLElement;
     private buttons: NodeListOf<Element>;
-    private requestHandler: RequestHandler;
+    private deleteRequest: DeleteRequest;
     private handleToSearching: HandlerToSearching;
 
     constructor(containerSelector: string, buttonSelector: string) {
         this.handleToSearching = new HandlerToSearching('#searcherInput');
         this.container = document.querySelector(containerSelector) as HTMLElement;
         this.buttons = this.container.querySelectorAll(buttonSelector);
-        this.requestHandler = new RequestHandler();
+        this.deleteRequest = new DeleteRequest();
         this.fetchOnClick = this.fetchOnClick.bind(this);
     }
 
@@ -34,8 +34,9 @@ export class HandlerToDeleteVM {
         const button = event.target as HTMLElement;
         const component = button.parentNode?.parentNode as HTMLElement;
         const componentId = component.id;
-        const status = await this.requestHandler.makeRequest("DELETE", componentId, {});
-        if(status == componentId) component.remove();
+        const response = await this.deleteRequest.request({}, componentId);
+        if(response.status == componentId)component.remove();
+        return response;
     }
 
     public async addEventListeners() {
@@ -43,8 +44,19 @@ export class HandlerToDeleteVM {
             button.addEventListener('click', async (event) => {
                 const userPressedRemove = await this.modalAlert();
                 if(userPressedRemove) {
-                    this.fetchOnClick(event);
-                    this.handleToSearching.reload();
+                    const response = await this.fetchOnClick(event);
+                    if(response.status != 'error'){
+                        this.handleToSearching.reload();
+                    } else {
+                        const messagesDiv = document.querySelector('.delete-alert');
+                        if(messagesDiv) {
+                            messagesDiv.innerHTML='';
+                            const alertDiv = document.createElement('div');
+                            alertDiv.className = 'alert alert-warning';
+                            alertDiv.innerHTML = `<strong>Warning!</strong> ${response.message}`;
+                            messagesDiv?.appendChild(alertDiv);
+                        }
+                    }
                 }
             });
         });

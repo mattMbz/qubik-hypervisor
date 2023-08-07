@@ -31,6 +31,7 @@ class VirtualMachine(models.Model):
     app_version = models.CharField(max_length=10, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE) # N to 1 relation
     resources = models.OneToOneField(Resources, on_delete=models.CASCADE, default=None) # 1 to 1 relation
+    state = models.BooleanField(default=False) # True when VM is Turned ON
     creation_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
