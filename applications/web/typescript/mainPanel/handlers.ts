@@ -11,7 +11,7 @@ export class HandlerToMainPanel {
     }
 
     public addEventListenersForToggleSwitches() {
-        this.virtualMachineComponents.forEach(component => {
+        this.virtualMachineComponents.forEach( component => {
             
             const toggleSwitch = component.querySelector(`#toggle-${component.id}`) as HTMLInputElement;
             
@@ -20,7 +20,10 @@ export class HandlerToMainPanel {
             } else {
                 this.initialState = new PowerOff();
             }
-            const virtualMachine = new VirtualMachine(this.initialState);
+            console.log(component.id);
+            const virtualMachine = new VirtualMachine(this.initialState, component.id);
+
+            console.log(`ID: ${component.id} is ${this.initialState.description}`);
 
             toggleSwitch.addEventListener('change', () => {
                 virtualMachine.context.next();

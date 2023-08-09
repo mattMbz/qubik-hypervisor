@@ -1,6 +1,3 @@
-# Python utilities
-import uuid
-
 # Django utilities
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -10,7 +7,7 @@ from django.utils import timezone
 from django.shortcuts import redirect
 
 # Own libraries and functions
-from utils.validations import no_cache_render
+from utils.validations import no_cache_render, uuid_letter_prefix
 from app_tlk.tlk.utilities.hypervisor import Hypervisor
 
 # Custom form
@@ -71,11 +68,9 @@ def create_virtual_machine(request):
                     vdisk=chosen_vm_resources[3]
                 )
 
-                #Sprint(new_vm_resources)
-
                 vm_user =  User.objects.get(username=user.username)
                 VirtualMachine.objects.create(
-                    id = uuid.uuid1(),
+                    id = uuid_letter_prefix(),
                     name = virtual_machine_name,
                     app_name = application_name,
                     app_version = version,
@@ -146,7 +141,8 @@ def delete(request, vm_uuid=None):
     
     elif request.method=='DELETE':
         try:
-            virtual_machine = VirtualMachine.objects.get(id=uuid.UUID(vm_uuid))
+            #virtual_machine = VirtualMachine.objects.get(id=uuid.UUID(vm_uuid))
+            virtual_machine = VirtualMachine.objects.get(id=vm_uuid)
             
             if virtual_machine.name in hypervisor.getNamesOfRunningVM():
                 return JsonResponse(

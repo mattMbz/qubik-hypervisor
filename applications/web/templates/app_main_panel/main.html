@@ -70,11 +70,11 @@
                                 {% if vm.state %}checked{% endif %}
                                 />
                             </span>
-                            <span class="on-off-{{vm.id}}">
+                            <span class="status-{{vm.id}}">
                                 {% if vm.state %}
-                                <span class="badge bg-success">Power ON</span>
+                                    <span class="badge bg-success">Running</span>
                                 {% else %}
-                                <span class="badge bg-secondary">Power OFF</span>
+                                    <span class="badge bg-secondary">Power OFF</span>
                                 {% endif %}
                             </span>
                         </div>

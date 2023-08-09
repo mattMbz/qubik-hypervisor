@@ -25,7 +25,7 @@ class Services(models.Model):
 
 
 class VirtualMachine(models.Model):
-    id = models.UUIDField(primary_key=True)
+    id = models.CharField(max_length=100,primary_key=True)
     name = models.CharField(max_length=100)
     app_name = models.CharField(max_length=100, null=True)
     app_version = models.CharField(max_length=10, null=True)
