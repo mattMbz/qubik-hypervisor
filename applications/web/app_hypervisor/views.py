@@ -22,7 +22,11 @@ hypervisor = Hypervisor()
 
 @login_required
 def monitor(request):
-    return no_cache_render(request, 'app_hypervisor/monitor.html', {})
+    context = {
+        'resources': hypervisor.getHypervisorResources(),
+        'cores': [ f"CPU {n}" for n in range(hypervisor.cpu.get_cores())]
+    }
+    return no_cache_render(request, 'app_hypervisor/monitor.html', context=context)
 #End_def
 
 
@@ -90,11 +94,8 @@ def create_virtual_machine(request):
                 '''
                 hypervisor.createNewVirtualMachine(virtual_machine_name, chosen_vm_resources[0], number_service_chosen)
 
-                # Redirige al usuario a alguna página de éxito
                 messages.success(request, '&#128516; New virtual machine has been created successfully! ')
-                # go_to_url = reverse('mainpanel')
-                # go_to_message = f"Go to <a href='{go_to_url}'>Main panel</a>"
-                # messages.success(request, go_to_message, extra_tags='safe')
+
                 return redirect('create-vm')
     else:
         form = CreateVirtualMachineForm()

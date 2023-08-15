@@ -6,6 +6,7 @@ from prettytable import PrettyTable
 from tlk.utilities.hypervisor import Hypervisor
 from tlk.utilities.screen import RealTimeScreen as rts
 
+
 class CustomMenu():
     ''' '''
     def __init__(self) -> None:
@@ -80,7 +81,7 @@ class Process():
 
     def __init__(self) -> None:
         self.output = MenuOutput()
-        self.qubik = Hypervisor()
+        self.hypervisor = Hypervisor()
         self.keyword = '.cancel'
     #End_def
 
@@ -144,20 +145,20 @@ class Process():
              
                 if vm_resources != self.keyword:
                     if self.parse_vm_name(virtual_machine_name):
-                        self.qubik.createNewVirtualMachine(virtual_machine_name, operating_system, resource_options)
+                        self.hypervisor.createNewVirtualMachine(virtual_machine_name, operating_system, resource_options)
 
             # self.output.starts(vm_name)
         
         elif option == "2":
             print("Removing virtual machine")
-            print(self.qubik.getVirtualMachineNames())
+            print(self.hypervisor.getVirtualMachineNames())
             questions = [inquirer.Text('input', message="Input VM name to remove")]
             
             answers = inquirer.prompt(questions)
             vm_name = answers['input']
             print()
             if(vm_name!=self.keyword.lower()):
-                self.qubik.deleteVM(vm_name)
+                self.hypervisor.deleteVM(vm_name)
                 #executeFile(PATH, 'remove-vm.sh', vm_name)
         
         elif option == "3":
@@ -174,11 +175,11 @@ class Process():
                 new_vm_answers = inquirer.prompt(new_vm_question)
                 new_vm_name = new_vm_answers['new_vm_name']
                 if(new_vm_name != self.keyword.lower()):
-                    self.qubik.renameVM(virtual_machine_name, new_vm_name)
+                    self.hypervisor.renameVM(virtual_machine_name, new_vm_name)
 
         elif option == "4":
             print("Starting virtual machine ...")
-            choiceValues = self.qubik.getStoppedVM()
+            choiceValues = self.hypervisor.getStoppedVM()
             choiceValues.append(self.keyword)
             questions = [
                 inquirer.List(
@@ -194,11 +195,11 @@ class Process():
 
             if(vm_name != self.keyword.lower()):
                 #executeFile(PATH, 'start-vm.sh', vm_name)
-                self.qubik.startVM(vm_name)
+                self.hypervisor.startVM(vm_name)
 
         elif option == "5":
             print("Shutting down virtual machine ...")
-            choiceValues = self.qubik.getNamesOfRunningVM()
+            choiceValues = self.hypervisor.getNamesOfRunningVM()
             choiceValues.append(self.keyword)
             questions = [
                 inquirer.List(
@@ -213,12 +214,12 @@ class Process():
             print()
             if(selected_options != self.keyword.lower()):
                 #executeFile(PATH, 'shutdown-vm.sh', selected_options)
-                self.qubik.shutdownVM(selected_options)
+                self.hypervisor.shutdownVM(selected_options)
                 
         elif option == "6":
             print("Your virtual machines: ")
             print()
-            vm_list =  self.qubik.listVirtualMachines()
+            vm_list =  self.hypervisor.listVirtualMachines()
             table = PrettyTable()
             table.field_names = ["Id","Virtual Machine","State"]
             for vm in vm_list:
@@ -254,8 +255,8 @@ class Process():
 
 
     def show_pretty_list(self, ):
-        self.qubik = Hypervisor()
-        vm_list =  self.qubik.listVirtualMachines()
+        self.hypervisor = Hypervisor()
+        vm_list =  self.hypervisor.listVirtualMachines()
         table = PrettyTable()
         table.field_names = ["Id","Virtual Machine","State"]
         for vm in vm_list:

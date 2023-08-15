@@ -9,7 +9,7 @@ class RealTimeScreen:
 
     def __init__(self):
         self.exit_flag = threading.Event()  #Event to signal the end of the cycle
-        self.qubik = Hypervisor()
+        self.hypervisor = Hypervisor()
     #End_def
 
 
@@ -49,7 +49,7 @@ class RealTimeScreen:
 
     def getCPUValues(self):
         ''' Get CPU values from hypervisor module '''
-        cpu_values = self.qubik.cpu.read()
+        cpu_values = self.hypervisor.cpu.read()
         
         return cpu_values
     #End_def
@@ -57,7 +57,7 @@ class RealTimeScreen:
 
     def getMemoryValues(self):
         ''' Get Memory values from hypervisor module '''
-        memory_values = self.qubik.memory.read()
+        memory_values = self.hypervisor.memory.read()
 
         return memory_values
     #End_def
@@ -65,7 +65,7 @@ class RealTimeScreen:
 
     def getDiskValues(self, stdscr):
         ''' '''
-        disk_values = self.qubik.disk.read()
+        disk_values = self.hypervisor.disk.read()
         disk_line = f"Used: {disk_values['used']} of {disk_values['available']} [{disk_values['percentage']}]"
         stdscr.addstr(4, 0, "===Disk===")
         stdscr.addstr(5, 0, disk_line)
@@ -110,3 +110,5 @@ class RealTimeScreen:
         rts = RealTimeScreen()
         curses.wrapper(rts.screen)
     #End_def
+
+#End_Class

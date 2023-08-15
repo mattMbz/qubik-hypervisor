@@ -166,15 +166,21 @@ class Hypervisor:
     
     def getStoppedVM(self):
         defined_domains = self.conn.listDefinedDomains()
-        only_stopped_vms = []
-        print(defined_domains)
-
         return defined_domains
     #End_def
 
 
     def getHypervisorResources(self):
-        pass
+        node_info = self.conn.getInfo()
+        return {
+            'hostname': os.uname().nodename,
+            'os': os.uname().sysname,
+            'release': os.uname().release,
+            'version': os.uname().version,
+            'machine': node_info[0],
+            'memory': node_info[1],
+            'vcpus': node_info[2]
+        }
     #End_def
 
 #End_class

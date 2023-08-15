@@ -6,6 +6,7 @@ module.exports = {
   entry: {
     mainPanel: './applications/web/typescript/mainPanel/main.ts',
     deleteVirtualMachine: './applications/web/typescript/deleteVirtualMachine/main.ts',
+    resourceMonitor: './applications/web/typescript/resourceMonitor/main.ts',
   },
   watch: true,
   watchOptions: {
