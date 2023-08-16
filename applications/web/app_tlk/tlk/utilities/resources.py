@@ -157,7 +157,6 @@ class Disk:
             'available': values[1],
             'percentage': values[4]
         }
-        #print(f' Used: {values[2]} of {values[1]}  [{values[4]}]')
     #End_def
 
 #End_Class

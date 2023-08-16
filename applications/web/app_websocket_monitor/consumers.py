@@ -2,9 +2,13 @@ import asyncio, json
 from random import randint
 from channels.generic.websocket import AsyncWebsocketConsumer
 
+from app_tlk.tlk.utilities.hypervisor import Hypervisor
+
 
 class WSConsumer(AsyncWebsocketConsumer):
     
+    hypervisor = Hypervisor()
+
     async def connect(self):
         await self.accept()
         self.connected = False
@@ -17,8 +21,8 @@ class WSConsumer(AsyncWebsocketConsumer):
          - If the client sends 'cpu', it starts sending Real-time % CPU usage data.
          - If the client sends 'ram', it starts sending real time RAM usage data.
          - If the client sends 'disk',it starts sending Disk usage data.
-
         '''
+        
         mssg = text_data
 
         if mssg == 'stop':
@@ -51,28 +55,29 @@ class WSConsumer(AsyncWebsocketConsumer):
 
 
     async def send_cpu_data(self):
-        while True:
-            await self.send(json.dumps({
-                'cpu0': randint(1, 100),
-                'cpu1': randint(1, 100),
-                'cpu2': randint(1, 100),
-                'cpu3': randint(1, 100)
-            }))
-            await asyncio.sleep(3)
+        while True:    
+            cpu_usage = self.hypervisor.cpu.read()
+            print(cpu_usage)
+            await self.send(json.dumps(cpu_usage))
+            await asyncio.sleep(1)
     #End_def
 
 
     async def send_memory_data(self):
         while True:
-            await self.send(json.dumps( {'memory': randint(1, 100)} ))
-            await asyncio.sleep(5)
+            memory_usage = self.hypervisor.memory.read()
+            print(memory_usage)
+            await self.send(json.dumps( memory_usage ))
+            await asyncio.sleep(10)
     #End_def
 
 
     async def send_disk_data(self):
         while True:
-            await self.send(json.dumps( {'disk': randint(1, 100)} ))
-            await asyncio.sleep(5)
+            disk_usage = self.hypervisor.disk.read()
+            print(disk_usage)
+            await self.send(json.dumps( disk_usage ))
+            await asyncio.sleep(10)
     #End_def
 
 # End_class
