@@ -1,5 +1,4 @@
 import asyncio, json
-from random import randint
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 from app_tlk.tlk.utilities.hypervisor import Hypervisor
@@ -59,7 +58,7 @@ class WSConsumer(AsyncWebsocketConsumer):
             cpu_usage = self.hypervisor.cpu.read()
             print(cpu_usage)
             await self.send(json.dumps(cpu_usage))
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.05)
     #End_def
 
 

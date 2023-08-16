@@ -80,9 +80,9 @@ class HtmlHypervisorMonitor {
             for (const key in data) {
                 if (data.hasOwnProperty(key)) {
                     const value = data[key];
-                    this.cpuArrays.percentCpu[i].textContent = ` ${value}%`;
-                    this.cpuArrays.cpuProgressBar[i].style.width = `${value}%`;
-                    this.cpuArrays.cpuProgressBar[i].textContent = `${Math.floor(value)}%`;
+                    this.cpuArrays.percentCpu[i].textContent = ` ${Math.floor(value)}%`;
+                    this.cpuArrays.cpuProgressBar[i].style.width = `${Math.floor(value)}%`;
+                    // this.cpuArrays.cpuProgressBar[i].textContent = `${Math.floor(value)}%`;
                 }
                 i++;
             }
@@ -92,7 +92,7 @@ class HtmlHypervisorMonitor {
             const percentage = data['percentage'];
             this.memory.usedMemory.textContent = `Used Memory: ${used}`;
             this.memory.totalMemory.textContent = `Total: ${available}`;
-            this.memory.percentMemory.textContent = `Used[%]: ${percentage}`;
+            this.memory.percentMemory.textContent = `Used: ${percentage}%`;
             this.memory.memoryProgressBar.style.width = `${percentage}%`;
             this.memory.memoryProgressBar.textContent = `${Math.floor(percentage)}%`;
 

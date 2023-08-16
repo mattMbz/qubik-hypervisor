@@ -28,9 +28,6 @@
       <li class="nav-item disk-tab tab">
         <a class="nav-link" data-bs-toggle="tab" href="#menu2">Disk</a>
       </li>
-      <li class="nav-item grap-tab tab">
-        <a class="nav-link" data-bs-toggle="tab" href="#menu3">Graph</a>
-      </li>
     </ul>
   
     <!-- Tab panes -->
@@ -76,7 +73,7 @@
             <span class="badge text-black-50 percent-cpu"></span>
             <div class="">
               <div class="progress mb-4 mt-2">
-                <div class="progress-bar bg-danger cpu-progress-bar" style="width:0%"></div>
+                <div class="bg-danger cpu-progress-bar" style="width:0%"></div>
               </div>
             </div>
           {% endfor %}
@@ -114,6 +111,7 @@
       </div>
   
     </div>
+  </div>
 </div>
 
 <script src="{% static 'js/resourceMonitor/bundle.js' %}"></script>
