@@ -10,5 +10,6 @@ urlpatterns = [
     path("delete-vm/", views.delete, name="delete-vm"),
     path("delete-vm/<str:vm_uuid>", views.delete, name='delete-vm-with-id'),
     path("start-vm/<str:vm_uuid>", views.start, name="start-vm-with-id"),
-    path("shutdown-vm/<str:vm_uuid>", views.shutdown, name="shutdown-vm-with-id")
+    path("shutdown-vm/<str:vm_uuid>", views.shutdown, name="shutdown-vm-with-id"),
+    path("status-vm/<str:vm_uuid>", views.status, name="checking-vm-status")
 ]

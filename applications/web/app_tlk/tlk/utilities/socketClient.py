@@ -1,52 +1,61 @@
-import threading, socket
-from time import sleep
+import threading, socket, json
 
 
 class SocketClientController(threading.Thread):
 
-    def __init__(self, host, port, time, message):
+    def __init__(self, host, port, message):
         threading.Thread.__init__(self)
-        self.stop = False
         self.host = host
         self.port = port
         self.message = message
-        self.time = time
-    #End_def
+        self.response = None
+        self.error_message = None
     
     def run(self):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            print(self.host)
             try:
                 s.connect((self.host, self.port))
-
-                while not self.stop:
-                    sleep(self.time)
-                    s.sendall(self.message.encode())
-                    data = s.recv(1024)
-                    print(data.decode())
-
-            except (ConnectionResetError, BrokenPipeError) as e:
-                print("Connection error: ", e)
-    #End_def
-
-    def stop_socket_client(self):
-        self.stop = True
-        print("STOP")
-    #End_def
-
-#End_class
+                s.sendall(self.message.encode())
+                self.response = s.recv(1024).decode()
+            except (ConnectionResetError, BrokenPipeError, OSError) as e:
+                self.error_message = "Connection error: " + str(e)
+    
+    def get_response(self):
+        return self.response
+    
+    def get_error_message(self):
+        return self.error_message
 
 
+def get_vm_resources(host, port, message):
+    try:
+        socket_client = SocketClientController(host, port, message)
+        socket_client.start()
 
-HOST = "192.168.122.21"  # Virtual Machine IP
-PORT = 8503              # Port to send data
-TIME = 1.2
-MESSAGE = 'cpu'
+        # Wait for the socket thread to finish
+        socket_client.join()
 
-cpu_socket=SocketClientController(HOST, PORT, TIME, MESSAGE)
-cpu_socket.start()
+        # Check if there was an error message or get the response
+        error_message = socket_client.get_error_message()
 
-# memory_socket=SocketClientController(HOST, PORT, 'memory')
-# memory_socket.start()
+        if error_message:
+            print(error_message)
+            error = {}
+            error['message'] = 'not_available'
+            return error
 
-#disk_socket=SocketClientController(HOST, PORT, 'disk')
-#disk_socket.start()
+        else:
+            response_str = socket_client.get_response()
+            print(response_str)
+            response_str = response_str.replace("'", '"')
+            try:
+                response_dict = json.loads(response_str)
+                return response_dict
+
+            except json.JSONDecodeError as e:
+                print("Error decoding JSON:", e)
+                
+
+    except(KeyError) as e:
+        print(e)

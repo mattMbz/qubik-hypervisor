@@ -20,6 +20,7 @@ from .models import VirtualMachine, Resources, Services
 ## app_hypervisor application views
 hypervisor = Hypervisor()
 
+
 @login_required
 def monitor(request):
     context = {
@@ -27,13 +28,11 @@ def monitor(request):
         'cores': [ f"CPU {n}" for n in range(hypervisor.cpu.get_cores())]
     }
     return no_cache_render(request, 'app_hypervisor/monitor.html', context=context)
-#End_def
 
 
 @login_required
 def tasks(request):
     return no_cache_render(request, 'app_hypervisor/tasks.html', {})
-#End_def
 
 
 @login_required
@@ -101,19 +100,27 @@ def create_virtual_machine(request):
         form = CreateVirtualMachineForm()
 
     return no_cache_render(request, 'app_hypervisor/create_vm.html', {'form': form})
-#End_def
 
 
 @login_required
 def start(request, vm_uuid):
     virtual_machine = VirtualMachine.objects.get(id=vm_uuid)
-    virtual_machine.state = True
+    virtual_machine.state = False
     virtual_machine.save()
     print(f'START -> {virtual_machine}')
     hypervisor.startVM(virtual_machine.name)
 
     return JsonResponse({'status':f'{vm_uuid}'})
-#End_def
+
+
+@login_required
+def status(request, vm_uuid):
+    virtual_machine = VirtualMachine.objects.get(id=vm_uuid)
+    vmname = virtual_machine.name
+    vm_ip_address = hypervisor.vm_ipv4_address(vmname)
+    checked = hypervisor.vm_check_status(vm_ip_address)
+
+    return JsonResponse(checked)
 
 
 @login_required
@@ -124,7 +131,6 @@ def shutdown(request, vm_uuid):
     hypervisor.shutdownVM(virtual_machine.name)
     
     return JsonResponse({'status':f'{vm_uuid}'})
-#End_def
 
 
 @login_required

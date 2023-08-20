@@ -248,16 +248,41 @@ func getCPUInfo() (string, error) {
 		cpuUsageArray = append(cpuUsageArray, strconv.FormatFloat(percentage, 'f', 2, 64))
 	}
 
-	cpuPythonDict := "{ "
+	cpuPythonDict := "{"
 	end := "}"
 
 	for i := 0; i < len(cpuUsageArray); i++ {
-		cpuPythonDict = cpuPythonDict+"'"+"cpu"+strconv.Itoa(i)+"':'"+cpuUsageArray[i]+"',"
+		if i==0 {
+			cpuPythonDict = cpuPythonDict+"'"+"cpu"+strconv.Itoa(i)+"':'"+cpuUsageArray[i]+"'"
+		} else {
+			cpuPythonDict = cpuPythonDict+",'"+"cpu"+strconv.Itoa(i)+"':'"+cpuUsageArray[i]+"'"
+		}
 	}
 	cpuPythonDict = cpuPythonDict + end
 
 	return cpuPythonDict, nil	
 }
+
+
+func readAll() (string, error) {
+    cpu, err1 := getCPUInfo()
+    if err1 != nil {
+        return "", err1
+    }
+
+    memory, err2 := getMemoryInfo()
+    if err2 != nil {
+        return "", err2
+    }
+
+    disk, err3 := getDiskInfo()
+    if err3 != nil {
+        return "", err3
+    }
+
+    return "{" + "'cpu':"+ cpu + "," +"'memory':"+ memory + "," +"'disk':"+ disk + "}", nil
+}
+
 
 func handleConnection(conn net.Conn) {
 
@@ -282,8 +307,8 @@ func handleConnection(conn net.Conn) {
 			response, err = getMemoryInfo()
 		case "disk":
 			response, err = getDiskInfo()
-		// case "all":
-		// 	response, err = readAll()
+		case "all":
+			response, err = readAll()
 		default:
 			response = "Invalid request"
 		}

@@ -112,7 +112,3 @@ class HtmlHypervisorMonitor {
 
     }
 }
-
-class VirtualMachineResourcesMonitor {}
-
-class HtmlVirtualMachineMonitor {}

@@ -6,6 +6,8 @@ import {
     dangerBadge
 } from '../html/HTMLComponents';
 
+import {Get, Post} from '../http/requests';
+
 export class Context {
 
     private state: State;
@@ -89,8 +91,13 @@ export class PowerOff extends State {
 
 class Starting extends State {
 
+    private getMethod: Get;
+    private postMethod: Post;
+
     constructor() {
         super('Starting...', 'Loading app...');
+        this.getMethod = new Get();
+        this.postMethod = new Post();
     }
 
     get description(): string {
@@ -125,9 +132,18 @@ class Starting extends State {
             virtualMachineInfo.innerHTML = smallSpinner(this._action);
         }
 
-        const startInterval = setInterval(() => {
+        this.postMethod.request({"action":"start"}, virtualMachineId);
+
+        const startInterval = setInterval( async () => {
             if (loop) {
                 console.log("Consultado API: vm_State");
+                const state = await this.getMethod.request({}, virtualMachineId);
+                if(state.message == 'not_available') {
+                    console.log(state);
+                } else {
+                    loop = false;
+                    console.log(state);
+                }
             } else {
                 clearInterval(startInterval);
                 toggleSwitch.disabled = false;
@@ -147,9 +163,9 @@ class Starting extends State {
         }, 5000);
 
         // Simula el cambio de loop después de 15 segundos
-        setTimeout(() => {
-            loop = false;
-        }, 15000);
+        // setTimeout(() => {
+        //     loop = false;
+        // }, 15000);
     }
 }
 
@@ -191,8 +207,11 @@ export class Running extends State {
 
 class ShuttingDown extends State {
 
+    private postMethod: Post;
+
     constructor() {
-        super( 'Shutting Down...','Closing...');
+        super('Shutting Down...','Closing...');
+        this.postMethod = new Post();
     }
 
     get description(): string {
@@ -227,9 +246,12 @@ class ShuttingDown extends State {
             virtualMachineInfo.innerHTML = smallSpinner(this._action);
         }
 
+        this.postMethod.request({"action":"shutdown"}, virtualMachineId);
+
         const startInterval = setInterval(() => {
             if (loop) {
                 console.log("Consultado API: vm_State");
+
             } else {
                 clearInterval(startInterval);
                 toggleSwitch.disabled = false;

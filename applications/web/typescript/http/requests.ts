@@ -20,11 +20,13 @@ abstract class HttpRequestHandler {
         const csrf: string = csrfElement?.value || '';
         headers['X-CSRFToken'] =  csrf;
   
-        const res = await fetch(endpoint, {
-            method: this.method,
-            headers: headers,
-            body: body
-        });
+        let requestType: any = {};
+
+        requestType = {method: this.method, headers: headers}
+
+        if(this.method != 'GET') requestType['body'] = body
+
+        const res = await fetch(endpoint, requestType);
     
         const data = await res.json();
         
@@ -38,7 +40,7 @@ abstract class HttpRequestHandler {
 } /**End_class */
 
 
-export class DeleteRequest extends HttpRequestHandler {
+export class Delete extends HttpRequestHandler {
 
     constructor() {
         super('DELETE')
@@ -59,7 +61,7 @@ export class DeleteRequest extends HttpRequestHandler {
 } /**End_class */
 
 
-export class PostRequest extends HttpRequestHandler {
+export class Post extends HttpRequestHandler {
 
     constructor() {
         super('POST')
@@ -83,6 +85,27 @@ export class PostRequest extends HttpRequestHandler {
         const endpoint = this.getEndpoint(body.action, parameter);
         const response = await this.makeRequest(body, endpoint)
         console.log(`Recibido <- ${response}`);
+    }
+
+} /**End_class */
+
+
+export class Get extends HttpRequestHandler {
+
+    constructor() {
+        super('GET')
+    }
+
+    getEndpoint(parameter?: string | number ): string {
+        const HTTPSERVER = process.env.HTTPSERVER;
+        const CHECK_VM_STATUS = process.env.CHECK_VM_STATUS_ENDPOINT;
+        const endpoint = (parameter: any) => `${HTTPSERVER}/${CHECK_VM_STATUS}/${parameter}`;
+        return endpoint(parameter);
+    }
+
+    public async request(body: any, parameter?: string,){ 
+        const endpoint = this.getEndpoint(parameter)
+        return await this.makeRequest(body, endpoint)
     }
 
 } /**End_class */

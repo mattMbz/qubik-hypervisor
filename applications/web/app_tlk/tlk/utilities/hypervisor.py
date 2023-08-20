@@ -3,14 +3,14 @@ import libvirt, os
 from dotenv import load_dotenv
 
 # TLK imports
-from app_tlk.tlk.utilities.bash import executeFile
+from app_tlk.tlk.utilities.bash import executeFile, executeFileWithReturn
 from app_tlk.tlk.utilities.resources import Memory, Disk, CPU
+from app_tlk.tlk.utilities.socketClient import get_vm_resources
 
 # Global variables and paths
 load_dotenv()
 PATH = os.getenv('PATH_TO_SCRIPT')
-#PATH_TO_STORAGE_POOL = os.getenv('PATH_TO_STORAGE_POOL')
-
+PORT = int(os.getenv('WS_PORT'))
 
 class Hypervisor:
     '''Implementing Libvirt functionalities for managing virtual machines '''
@@ -24,7 +24,6 @@ class Hypervisor:
         if self.conn == None:
             print('Hypervisor conection Failed!')
             exit(1)
-    #End_def
 
     
     def createNewVirtualMachine(self, vmname, operating_system, resource_options):
@@ -72,13 +71,11 @@ class Hypervisor:
 
        else:
             print('Not implemented yet !')
-    #End_def
 
 
     def startVM(self, vmname):
         domain = self.conn.lookupByName(vmname)
         domain.create()
-    #End_def
    
 
     def renameVM(self, oldname, newname):
@@ -90,7 +87,6 @@ class Hypervisor:
             domain.rename(newname)
         except Exception as error:
             print("ERROR: ", type(error).__name__)
-    #End_def
 
    
     def deleteVM(self, vmname):
@@ -109,14 +105,12 @@ class Hypervisor:
 
         else:
             print('That VM  not exists !')    
-    #End_def
 
 
     def shutdownVM(self,vmname):
         ''' '''
         domain = self.conn.lookupByName(vmname)
         domain.shutdown()
-    #End_def        
 
 
     def listVirtualMachines(self):
@@ -137,7 +131,6 @@ class Hypervisor:
             vms.append({'id': id, 'vmname': domain.name(), 'state': state})
         
         return vms
-    #End_def
 
 
     def getVirtualMachineNames(self):
@@ -147,7 +140,6 @@ class Hypervisor:
             onlynames.append(domain.name())
         
         return onlynames
-    #End_def
     
     
     def getNamesOfRunningVM(self):
@@ -161,13 +153,11 @@ class Hypervisor:
             print('There are not Running Virtual Machine, press ENTER to exit!')
     
         return only_actives
-    #End_def
             
     
     def getStoppedVM(self):
         defined_domains = self.conn.listDefinedDomains()
         return defined_domains
-    #End_def
 
 
     def getHypervisorResources(self):
@@ -181,6 +171,26 @@ class Hypervisor:
             'memory': node_info[1],
             'vcpus': node_info[2]
         }
-    #End_def
 
-#End_class
+
+    def vm_cpu_usage(self, host):
+        return get_vm_resources(host, PORT, 'cpu')
+
+
+    def vm_memory_usage(self, host):
+        return get_vm_resources(host, PORT, 'memory')
+
+
+    def vm_disk_usage(self, host):
+        return get_vm_resources(host, PORT, 'disk')
+
+
+    def vm_check_status(self, host):
+        status = get_vm_resources(host, PORT, 'cpu')
+        return status
+
+
+    def vm_ipv4_address(self, vmname):
+        ipv4 = executeFileWithReturn(PATH, 'get-vm-ipv4.sh', vmname)
+        ip_address = ipv4.strip().replace(" ", "")
+        return ip_address

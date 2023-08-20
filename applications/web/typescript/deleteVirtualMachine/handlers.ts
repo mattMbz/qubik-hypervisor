@@ -1,18 +1,18 @@
-import { DeleteRequest } from '../http/requests';
+import { Delete } from '../http/requests';
 
 
 export class HandlerToDeleteVM {
 
     private container: HTMLElement;
     private buttons: NodeListOf<Element>;
-    private deleteRequest: DeleteRequest;
+    private delete: Delete;
     private handleToSearching: HandlerToSearching;
 
     constructor(containerSelector: string, buttonSelector: string) {
         this.handleToSearching = new HandlerToSearching('#searcherInput');
         this.container = document.querySelector(containerSelector) as HTMLElement;
         this.buttons = this.container.querySelectorAll(buttonSelector);
-        this.deleteRequest = new DeleteRequest();
+        this.delete = new Delete();
         this.fetchOnClick = this.fetchOnClick.bind(this);
     }
 
@@ -34,7 +34,7 @@ export class HandlerToDeleteVM {
         const button = event.target as HTMLElement;
         const component = button.parentNode?.parentNode as HTMLElement;
         const componentId = component.id;
-        const response = await this.deleteRequest.request({}, componentId);
+        const response = await this.delete.request({}, componentId);
         if(response.status == componentId)component.remove();
         return response;
     }

@@ -42,16 +42,28 @@
                                 class="btn btn-outline-secondary border-0"
                                 data-bs-toggle="dropdown"
                             >...</button>
-                            <div class="dropdown-menu p-3" style="width: 280px; background-color: #eaf584;">
-                               <div class="small">Name: {{vm.name}}</div>
-                               <div class="small">ID: {{vm.id}}</div>
+                            <div class="dropdown-menu p-3" id="dropdown-{{vm.id}}" style="width: 280px; background-color: #eaf584;">
+                               <div class="small"><strong>OS:</strong> {{vm.resources.os}}</div>
+                               <div class="small"><strong>VM Name:</strong> {{vm.name}}</div>
+                               <span class="small"><strong>id</strong>:{{vm.id}}</span>
                                <hr>
-                               <div class="small">App: {{vm.app_name}}</div>
-                               <div class="small">Version: {{vm.app_version}}</div>
+                               <div class="small"><strong>App:</strong> {{vm.app_name}}</div>
+                               <div class="small"><strong>Version:</strong> {{vm.app_version}}</div>
                                <hr>
-                               <div class="small">V-CPU: {{vm.vcpu}}</div>
-                               <div class="small">V-RAM: xMB / {{vm.vram}}GB (35%)</div>
-                               <div class="small">V-DISK: xGB / {{vm.vdisk}}GB (6%)</div>
+                               <div class="small vcpu">
+                                    <div><strong>V-CPU:</strong> {{vm.resources.vcpu}}</div>
+                                    <div class="vcpu-array"></div>
+                               </div>
+                               <div class="small vram mt-1">
+                                    <span><strong>V-RAM:</strong> {{vm.resources.vram}}</span> 
+                                    <div class="vram-used"></div>
+                                    <span class="vram-percent"></span>
+                               </div>
+                               <div class="small vdisk mt-1">
+                                    <span><strong>V-DISK:</strong> {{vm.resources.vdisk}}</span> 
+                                    <div class="vdisk-used"></div>
+                                    <span class="vdisk-percent"></span>
+                               </div>
                             </div>                          
                         </span>
                     </div>
@@ -63,6 +75,7 @@
                         <hr>
                         <div class='d-flex justify-content-between'>
                             <span class="form-check form-switch">
+                                {% csrf_token %}
                                 <input
                                 class="form-check-input" 
                                 type="checkbox" 
