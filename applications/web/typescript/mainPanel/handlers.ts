@@ -9,10 +9,15 @@ export class HandlerToMainPanel {
     private webSocketForVDisk!: WebSocketConnector;
     private initialState!: any;
     private openSockets: boolean;
+    private lastExecutionTime: any;
 
     constructor() {
         this.virtualMachineComponents = document.querySelectorAll('.vm-component');
         this.openSockets = false;
+        this.webSocketForVCPU = new WebSocketConnector();
+        this.webSocketForVMemory = new WebSocketConnector();
+        this.webSocketForVDisk = new WebSocketConnector();
+        this.lastExecutionTime = 0;
     }
 
     public addEventListenersForToggleSwitches() {
@@ -27,10 +32,10 @@ export class HandlerToMainPanel {
             } else {
                 this.initialState = new PowerOff();
             }
-            console.log(component.id);
+
             const virtualMachine = new VirtualMachine(this.initialState, component.id);
 
-            console.log(`ID: ${component.id} is ${this.initialState.description}`);
+            // console.log(`ID: ${component.id} is ${this.initialState.description}`);
 
             toggleSwitch.addEventListener('change', () => {
                 virtualMachine.context.next();
@@ -38,13 +43,31 @@ export class HandlerToMainPanel {
         });
     }
 
+    public throttle(func: any, delay: any) {
+
+        return () => {
+          const currentTime = Date.now();
+          if (currentTime - this.lastExecutionTime >= delay) {
+            // console.log(this.lastExecutionTime);
+            // console.log(currentTime);
+            console.log(currentTime - this.lastExecutionTime);
+            console.log(delay);
+            func();
+            this.lastExecutionTime = currentTime;
+
+          } else {
+            console.log("NO EJECUTO NADA");
+          }
+        };
+    }
 
     public addEventListenerForVMResources() {
 
-        this.virtualMachineComponents.forEach(component => {
+        this.virtualMachineComponents.forEach( component => {
             const WEBSOCKET_SERVER_VM: string = process.env.WEBSOCKET_SERVER_VM as string;
-            const dropdownMenu = document.querySelector('.dropdown-menu');
-    
+            const dropdownMenu = document.querySelector(`#dropdown-${component.id}`);
+
+
             const options = {
                 root: null, 
                 rootMargin: '0px',
@@ -53,27 +76,49 @@ export class HandlerToMainPanel {
     
             // Create an Intersection Observer with a callback function
             const observer = new IntersectionObserver( (entries) => {
-
+            
                 entries.forEach((entry) => {
-                    
-                    if (entry.isIntersecting) {
-                        this.webSocketForVCPU = new WebSocketConnector();
-                        this.webSocketForVMemory = new WebSocketConnector();
-                        this.webSocketForVDisk = new WebSocketConnector();
-                        this.openSockets = true;
-                        console.log(`active -> ${component.id}`);
-                        this.webSocketForVCPU.connectToWebSocket(WEBSOCKET_SERVER_VM, new HtmlCPUMonitor(component.id));
-                        this.webSocketForVMemory.connectToWebSocket(WEBSOCKET_SERVER_VM, new HtmlVRamMonitor(component.id));
-                        this.webSocketForVDisk.connectToWebSocket(WEBSOCKET_SERVER_VM, new HtmlVDiskMonitor(component.id));
 
-                        setTimeout(() => {
-                            this.webSocketForVCPU.sendMessage(`vcpu-${component.id}`);
-                            this.webSocketForVMemory.sendMessage(`vram-${component.id}`);
-                            this.webSocketForVDisk.sendMessage(`vdisk-${component.id}`);
-                        }, 2000);
+                    this.webSocketForVCPU.close();
+                    this.webSocketForVMemory.close();
+                    this.webSocketForVDisk.close();
+
+                    if (entry.isIntersecting) {
+                        if (component.querySelector(`.status-${component.id} .badge`)?.textContent == 'Running') {
+                            
+                            const connectWebSocket = () => {
+                                this.webSocketForVCPU.connectToWebSocket(WEBSOCKET_SERVER_VM, new HtmlCPUMonitor(component.id));
+                                this.webSocketForVMemory.connectToWebSocket(WEBSOCKET_SERVER_VM, new HtmlVRamMonitor(component.id));
+                                this.webSocketForVDisk.connectToWebSocket(WEBSOCKET_SERVER_VM, new HtmlVDiskMonitor(component.id));
+                                this.openSockets = true;
+                                
+                                const waitForSocketOpened = (socket: any, targetState: any, callback: any) => {
+                                    if (socket.readyState === targetState) {
+                                        callback();
+                                    } else {
+                                        setTimeout( () => waitForSocketOpened(socket, targetState, callback), 100);
+                                    }
+                                }
+                                
+                                waitForSocketOpened(this.webSocketForVCPU.socket, WebSocket.OPEN, () => {
+                                    this.webSocketForVCPU.sendMessage(`vcpu-${component.id}`);
+                                });
+                                waitForSocketOpened(this.webSocketForVMemory.socket, WebSocket.OPEN, () => {
+                                    this.webSocketForVMemory.sendMessage(`vram-${component.id}`);
+    
+                                });
+                                waitForSocketOpened(this.webSocketForVDisk.socket, WebSocket.OPEN, () => {
+                                    this.webSocketForVDisk.sendMessage(`vdisk-${component.id}`);
+                                });
+                            }
+                            
+                            const throttleConnectWebSocket = this.throttle(connectWebSocket, 3000);
+
+                            throttleConnectWebSocket();
+
+                        }
 
                     } else {
-                        console.log(`idle -> ${component.id}`);
                         if (this.openSockets) {
                             this.webSocketForVCPU.close();
                             this.webSocketForVMemory.close();
@@ -81,13 +126,15 @@ export class HandlerToMainPanel {
                             this.openSockets = false;
                         }
                     }
-                } );
-            }, options );
+                } 
+            );
+        }, options );
     
             // Observe the dropdown-menu element where we will see the data
             if (dropdownMenu) {
                 observer.observe(dropdownMenu);
             }
+
         });
     }
 }

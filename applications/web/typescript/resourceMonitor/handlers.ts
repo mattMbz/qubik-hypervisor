@@ -24,7 +24,7 @@ export class HypervisorResourcesMonitor {
                     this.webSocket.connectToWebSocket(WEBSOCKET_SERVER, new HtmlHypervisorMonitor());
                     setTimeout(() => {
                         this.webSocket.sendMessage(message);
-                    }, 100);
+                    }, 500);
                 } else {
                     this.webSocket.close();
                 }
@@ -106,9 +106,6 @@ class HtmlHypervisorMonitor {
             this.disk.diskProgressBar.style.width = `${percentage}`;
             this.disk.diskProgressBar.textContent = `${percentage}`;
 
-        } else {
-            console.log("ERRROR");
         }
-
     }
 }

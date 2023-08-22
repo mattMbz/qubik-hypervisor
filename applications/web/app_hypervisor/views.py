@@ -105,7 +105,7 @@ def create_virtual_machine(request):
 @login_required
 def start(request, vm_uuid):
     virtual_machine = VirtualMachine.objects.get(id=vm_uuid)
-    virtual_machine.state = False
+    virtual_machine.state = True
     virtual_machine.save()
     print(f'START -> {virtual_machine}')
     hypervisor.startVM(virtual_machine.name)

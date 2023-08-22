@@ -29,11 +29,9 @@ export class WebSocketConnector {
   public close() {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       console.log('Cerrando el websocket...');
-      this.socket.send('stop');
-      this.socket.close();
+        this.socket.send('stop');
+        this.socket.close();
       console.log('WebSocket is Closed!');
-    } else {
-      console.log('websocket cerrado...');
     }
   }
 

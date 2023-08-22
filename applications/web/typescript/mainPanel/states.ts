@@ -8,6 +8,7 @@ import {
 
 import {Get, Post} from '../http/requests';
 
+
 export class Context {
 
     private state: State;
@@ -161,13 +162,9 @@ class Starting extends State {
                 this.context.virtualMachine.context.next();
             }
         }, 5000);
-
-        // Simula el cambio de loop después de 15 segundos
-        // setTimeout(() => {
-        //     loop = false;
-        // }, 15000);
     }
 }
+
 
 export class Running extends State {
 
