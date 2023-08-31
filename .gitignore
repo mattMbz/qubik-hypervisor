@@ -19,6 +19,7 @@ settings.py
 migrations/
 js/
 applications/web/app_tlk/.env
+applications/web/.env
 
 ### Typescript ###
 node_modules/

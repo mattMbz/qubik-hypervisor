@@ -14,7 +14,7 @@ export class HypervisorResourcesMonitor {
 
         this.webSocket = new WebSocketConnector();
         const WEBSOCKET_SERVER: string = process.env.WEBSOCKET_SERVER as string;
-
+        console.log(WEBSOCKET_SERVER);
         this.resourcesTab.forEach(tab => {
             tab.addEventListener('click', _ => {
                 const text = tab.textContent;

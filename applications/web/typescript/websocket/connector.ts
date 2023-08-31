@@ -12,7 +12,6 @@ export class WebSocketConnector {
 
     this.socket.onmessage = function (event) {
       var data = JSON.parse(event.data);
-      // console.log(data);
       html.update(data);
     };
 
@@ -29,8 +28,8 @@ export class WebSocketConnector {
   public close() {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       console.log('Cerrando el websocket...');
-        this.socket.send('stop');
-        this.socket.close();
+      this.socket.send('stop');
+      this.socket.close();
       console.log('WebSocket is Closed!');
     }
   }
