@@ -9,6 +9,10 @@ def version():
     print("version 1.0.0")
 
 
+def executeShellCommand(command):
+    subprocess.run(command, shell=True)
+
+
 def executeFile(path, filename , *params):
     path_script = os.path.join(path, filename)
         
@@ -49,5 +53,5 @@ def executeFileWithReturn(path, filename, *params):
 
 ## Run bash files
 def executeAllPath(path):
-    # It's not created yet
+    # It's not implemented yet
     pass

@@ -3,7 +3,8 @@ import libvirt, os
 from dotenv import load_dotenv
 
 # TLK imports
-from app_tlk.tlk.utilities.bash import executeFile, executeFileWithReturn
+from app_tlk.tlk.utilities.bash import executeFile, executeFileWithReturn, executeShellCommand
+from app_tlk.tlk.utilities.nginx import NginxHandler
 from app_tlk.tlk.utilities.resources import Memory, Disk, CPU
 from app_tlk.tlk.utilities.socketClient import get_vm_resources
 
@@ -20,13 +21,14 @@ class Hypervisor:
         self.memory = Memory()
         self.disk = Disk()
         self.cpu = CPU()
+        self.nginx_handler = NginxHandler()
 
         if self.conn == None:
             print('Hypervisor conection Failed!')
             exit(1)
 
     
-    def createNewVirtualMachine(self, vmname, operating_system, resource_options):
+    def createNewVirtualMachine(self, vmname, operating_system, resource_options, application_name, username):
        """ 
         Create new virtual machine
 
@@ -43,8 +45,9 @@ class Hypervisor:
                 '1': 'debianBase-1vcpu-512mb-2gb-vm', #1 CPU | 512 MB (RAM) |  2 GB (Disk)
                 '2': 'debianBase-2vcpu-768mb-4gb-vm', #2 CPU | 768 MB (RAM) |  4 GB (Disk)
                 '3': 'debianBase-3vcpu-768mb-4gb-vm', #3 CPU | 768 MB (RAM) |  4 GB (Disk)
-                '4': 'debianBase-4vcpu-2gb-8gb-vm',   #4 CPU |   2 GB (RAM) |  8 GB (Disk)
-                '5': 'debianBase-4vcpu-4gb-10gb-vm'   #4 CPU |   4 GB (RAM) | 10 GB (Disk)
+                '4': 'debianBase-2vcpu-768mb-4gb-nginx-python3',
+                '5': 'debianBase-4vcpu-2gb-8gb-vm',   #4 CPU |   2 GB (RAM) |  8 GB (Disk)
+                '6': 'debianBase-4vcpu-4gb-10gb-vm',  #4 CPU |   4 GB (RAM) | 10 GB (Disk)
             },
             'Alpine Linux': {
                 '1': 'alpineBase-1vcpu-256mb-1gb-vm', #1 CPU | 256 MB (RAM) | 1 GB (Disk)
@@ -55,12 +58,18 @@ class Hypervisor:
             },
        }
 
-       if (operating_system=='Debian Linux' and resource_options=='2'):
+       if (operating_system=='Debian Linux' and (resource_options=='2' or resource_options=='4')):
             clone_option = (clone_options[operating_system][resource_options])
             print(f'clone.sh {clone_option} {vmname}')
 
             # Execute process from bash
             executeFile(PATH, 'clone-vm.sh', clone_option, vmname)
+
+            # Updating nginx locations for VM applications
+            ipv4 = executeFileWithReturn(PATH, 'get-vm-ipv4.sh', vmname)
+            self.nginx_handler.createNginxLocation(username, ipv4, application_name, vmname)
+            executeShellCommand("nginx -s reload")
+
 
        elif (operating_system=='Alpine Linux' and ( resource_options=='2' or resource_options=='3' )):
             clone_option = (clone_options[operating_system][resource_options])
@@ -89,7 +98,7 @@ class Hypervisor:
             print("ERROR: ", type(error).__name__)
 
    
-    def deleteVM(self, vmname):
+    def deleteVM(self, vmname, vm_id, username):
         '''Delete some virtual machine if exists.'''
         domains = self.getVirtualMachineNames()
         
@@ -101,6 +110,11 @@ class Hypervisor:
                print('The VM is running. Please Turn-off first !')
            else:
                 # Execute process from bash
+                print(f"vmname: {vmname}")
+                print(f"vm_id: {vm_id}")
+                print(f"Username: {username}")
+                self.nginx_handler.deleteNginxLocation(vm_id, username)
+                executeShellCommand("nginx -s reload")
                 executeFile(PATH, 'remove-vm.sh', vmname)
 
         else:

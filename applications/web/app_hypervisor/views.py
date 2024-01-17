@@ -56,8 +56,6 @@ def create_virtual_machine(request):
             user = request.user
 
             if user.is_authenticated:
-                print(f'USER: {user.username}')
-
                 # Haz algo con los datos, como guardarlos en la base de datos
                 print(f'vm name: {virtual_machine_name}')
                 print(f'app name: {application_name}')
@@ -91,7 +89,13 @@ def create_virtual_machine(request):
                     2. Operating system name
                     3. Option choice, is a number
                 '''
-                hypervisor.createNewVirtualMachine(virtual_machine_name, chosen_vm_resources[0], number_service_chosen)
+                hypervisor.createNewVirtualMachine (
+                    virtual_machine_name, 
+                    chosen_vm_resources[0], 
+                    number_service_chosen,
+                    application_name,
+                    user.username
+                )
 
                 messages.success(request, '&#128516; New virtual machine has been created successfully! ')
 
@@ -138,7 +142,6 @@ def delete(request, vm_uuid=None):
     if vm_uuid is None and request.method=='GET':
         
         user = request.user
-        #username = user.username
 
         if user.is_authenticated:
             context = {
@@ -147,6 +150,8 @@ def delete(request, vm_uuid=None):
             return no_cache_render(request, 'app_hypervisor/delete_vm.html', context=context)
     
     elif request.method=='DELETE':
+        user = request.user
+
         try:
             #virtual_machine = VirtualMachine.objects.get(id=uuid.UUID(vm_uuid))
             virtual_machine = VirtualMachine.objects.get(id=vm_uuid)
@@ -159,15 +164,15 @@ def delete(request, vm_uuid=None):
                     }
                 )
             else:
-                # Remove from database
-                virtual_machine.delete()
 
                 # Remove from Hypervisor register
-                hypervisor.deleteVM(virtual_machine.name)
+                hypervisor.deleteVM(virtual_machine.name, virtual_machine.id, user.username)
+                
+                # Remove from database
+                virtual_machine.delete()
 
                 print(f'Deleted >> {vm_uuid}')
                 return JsonResponse({'status':f'{vm_uuid}', 'message':'Virtual Machine deleted successfully'})
         
         except VirtualMachine.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Error'})
-#End_def

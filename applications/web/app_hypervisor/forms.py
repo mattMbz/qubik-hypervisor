@@ -68,7 +68,6 @@ class CreateVirtualMachineForm(forms.Form):
             hardware_choices.append(row)
         
         return hardware_choices
-    #End_def
 
 
     hardware = forms.ChoiceField(
@@ -90,6 +89,3 @@ class CreateVirtualMachineForm(forms.Form):
         if not re.match(pattern, virtualMachineName):
             raise forms.ValidationError("ERROR: The virtual machine name should only contain letters (uppercase or lowercase and numbers with pattern (0-9) (Ex. 'my-vm1025', 'python-virtual-machine'). Try another name! ")
         return virtualMachineName
-    #End_def
-
-#End_class

@@ -24,6 +24,16 @@ class Services(models.Model):
 #End_class
 
 
+class NginxLocations(models.Model):
+    location_config = models.TextField(max_length=1000)
+    virtual_machine = models.OneToOneField('VirtualMachine', on_delete=models.CASCADE)
+    creation_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"NginxLocation for {self.virtual_machine.name}"
+#End_class
+
+
 class VirtualMachine(models.Model):
     id = models.CharField(max_length=100,primary_key=True)
     name = models.CharField(max_length=100)
