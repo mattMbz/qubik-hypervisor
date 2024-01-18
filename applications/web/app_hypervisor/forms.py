@@ -2,6 +2,8 @@ import re
 from django import forms
 from app_hypervisor.models import Services
 
+
+
 class CreateVirtualMachineForm(forms.Form):
 
     virtualMachineName = forms.CharField(
@@ -21,8 +23,8 @@ class CreateVirtualMachineForm(forms.Form):
     )
 
     applicationName = forms.CharField(
-        required=False,
-        label='Application Name',
+        required=True,
+        label='Application Name (*)',
         max_length=15,
         widget= forms.TextInput(
             attrs = {
@@ -60,28 +62,27 @@ class CreateVirtualMachineForm(forms.Form):
         )
     )
 
-
     def load_choiceField():
         hardware_choices = []
         for service in Services.objects.all().values():
             row = (service['choice'], service['description'])
             hardware_choices.append(row)
+
+        print(hardware_choices)
         
         return hardware_choices
 
-
-    hardware = forms.ChoiceField(
-        required=False,
+    optradio = forms.ChoiceField(
         choices=load_choiceField(),
-        label='Select Hardware',
-        widget=forms.Select(
+        label='Select VM features & Technologies',
+        widget=forms.RadioSelect(
             attrs = {
-                "class": "form-select",
-                "id": 'hardware'
+                'class': 'form-check-input',
+                'id': 'radioSelect'
             }
         ),
+        initial='Debian Linux : 2',
     )
-
 
     def clean_virtualMachineName(self):
         virtualMachineName = self.cleaned_data['virtualMachineName']

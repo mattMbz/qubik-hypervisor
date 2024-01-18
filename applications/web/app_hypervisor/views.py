@@ -44,7 +44,7 @@ def create_virtual_machine(request):
             virtual_machine_name = form.cleaned_data['virtualMachineName']
             application_name = form.cleaned_data['applicationName']
             version = form.cleaned_data['version']
-            hardware = form.cleaned_data['hardware']
+            hardware = form.cleaned_data['optradio']
 
             number_service_chosen = hardware.split(":")[1]
             number_service_chosen = number_service_chosen.strip()

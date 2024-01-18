@@ -35,3 +35,9 @@
 .vm-info {
   height: 48px;
 }
+
+#radioSelect {
+  width: 600px;
+  list-style-type: none;
+  border: none;
+}

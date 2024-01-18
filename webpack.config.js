@@ -51,7 +51,7 @@ module.exports = {
   },
   plugins: [
     new Dotenv({
-      path: `./.env.${process.env.NODE_ENV}`,
+      path: `.env.${process.env.NODE_ENV}`,
     }),
   ],
   resolve: {
