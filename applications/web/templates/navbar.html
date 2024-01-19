@@ -46,7 +46,7 @@
           </li>
           {% if user.is_superuser %}
             <li class="nav-item">
-              <a class="nav-link" href="#">Administrator</a>
+              <a class="nav-link" href="{% url 'setup-vm' %}">Setup</a>
             </li>
           {% endif %}
         </ul>

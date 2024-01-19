@@ -1,0 +1,157 @@
+{% extends '../base.html' %}
+
+{% block title %}schedule tasks{% endblock title %}
+
+{% block content %}
+{% include '../navbar.html' %}
+<div class="container mt-5">
+
+  <section>
+      <h2>1. Choose your Virtual Machine</h2>
+      <p>Afterward, proceed to the next step to install your development stack.</p>
+      <select class="form-select" id="sel2" name="sellist2">
+        <option disabled selected value="">-- Selecciona una opción --</option>
+        <option value="opcion1">vm001 - guarani3.18</option>
+        <option value="opcion2">vm002 - test-estudiantes</option>
+        <option value="opcion3">VmGabriel - rectorado</option>
+      </select>
+  </section>
+   
+  <section class="mt-5">
+    <h2>2. Choose your Stack</h2>
+    <p>In this section, you can choose the technology stack for your Virtual Machines. Select a few, and then press the install button.</p> 
+
+    <hr>
+
+    <div class="d-flex flex-wrap">
+      <div class="form-check border">
+          <div class="p-2 order-2">
+            <input type="radio" class="form-check-input mt-3" id="radio1" name="webserver" value="nginx">
+            <img width="48" height="48" src="https://img.icons8.com/color/48/nginx.png" alt="nginx"/>
+            Nginx
+          </div>
+      </div>
+      <div class="form-check border">
+        <div class="p-2 order-2">
+          <input type="radio" class="form-check-input mt-3" id="radio2" name="webserver" value="apache">
+          <img width="48" height="48" src="https://www.svgrepo.com/show/353400/apache.svg" alt="apache"/>
+          Apache
+        </div>
+    </div>
+    </div>
+
+    <hr>
+
+    <div class="d-flex flex-wrap">
+      <div class="form-check border">
+          <div class="p-2 order-2">
+            <input type="radio" class="form-check-input mt-3" id="radio3" name="appserver" value="gunicorn">
+            <img width="48" height="48" src="https://www.svgrepo.com/show/353846/gunicorn.svg" alt="gunicorn"/>
+            Gunicorn (WSGI)
+          </div>
+      </div>
+      <div class="form-check border">
+        <div class="p-2 order-2">
+          <input type="radio" class="form-check-input mt-3" id="radio4" name="appserver" value="uvicorn">
+          <img width="48" height="48" src="https://www.uvicorn.org/uvicorn.png" alt="uvicorn"/>
+          Uvicorn (ASGI)
+        </div>
+    </div>
+    </div>
+
+    <hr>
+
+    <div class="d-flex flex-wrap">
+      <div class="form-check border">
+        <div class="p-2 order-2">
+          <input type="radio" class="form-check-input mt-3" id="radio5" name="backend" value="django">
+          <img width="48" height="48" src="https://img.icons8.com/external-tal-revivo-shadow-tal-revivo/96/external-django-a-high-level-python-web-framework-that-encourages-rapid-development-logo-shadow-tal-revivo.png" alt="external-django-a-high-level-python-web-framework-that-encourages-rapid-development-logo-shadow-tal-revivo"/>
+          Django
+        </div>
+      </div>
+      <div class="form-check border">
+        <div class="p-2 order-2">
+          <input type="radio" class="form-check-input mt-3" id="radio6" name="backend" value="drf">
+          <img width="48" height="48" src="https://www.svgrepo.com/show/353656/django.svg"/>
+          REST Framework
+        </div>
+      </div>
+      <div class="form-check border">
+        <div class="p-2 order-2">
+          <input type="radio" class="form-check-input mt-3" id="radio7" name="backend" value="fastapi">
+          <img width="48" height="48" src="https://cdn.worldvectorlogo.com/logos/fastapi-1.svg" alt="FastApi" />
+          FastApi
+        </div>
+      </div>
+      <div class="form-check border">
+        <div class="p-2 order-2">
+          <input type="radio" class="form-check-input mt-3" id="radio8" name="backend" value="express">
+          <img width="48" height="48" src="https://img.icons8.com/fluency/96/express-js.png" alt="express"/>
+          Express.js
+        </div>
+      </div>
+      <div class="form-check border">
+        <div class="p-2 order-2">
+          <input type="radio" class="form-check-input mt-3" id="radio9" name="backend" value="python">
+          <img width="48" height="48" src="https://img.icons8.com/color/96/python--v1.png" alt="python"/>
+          Python
+        </div>
+      </div>
+      <div class="form-check border">
+        <div class="p-2 order-2">
+          <input type="radio" class="form-check-input mt-3" id="radio10" name="backend" value="nodejs">
+          <img width="48" height="48" src="https://img.icons8.com/external-tal-revivo-shadow-tal-revivo/96/external-nodejs-is-an-open-source-cross-platform-javascript-run-time-environment-logo-shadow-tal-revivo.png" alt="node.js"/>
+          Node.js
+        </div>
+      </div>
+      <div class="form-check border">
+        <div class="p-2 order-2">
+          <input type="radio" class="form-check-input mt-3" id="radio11" name="backend" value="go">
+          <img width="48" height="48" src="https://cdn.worldvectorlogo.com/logos/golang-1.svg" alt="go"/>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="d-flex flex-wrap">
+      <div class="form-check border">
+        <div class="p-2 order-2">
+          <input type="radio" class="form-check-input mt-3" id="radio12" name="database" value="postgresql">
+          <img width="48" height="48" src="https://cdn.worldvectorlogo.com/logos/postgresql.svg" alt="postgresql">
+          PostgreSQL
+        </div>
+      </div>
+      <div class="form-check border">
+        <div class="p-2 order-2">
+          <input type="radio" class="form-check-input mt-3" id="radio13" name="database" value="mongodb">
+          <img width="48" height="48" src="https://img.icons8.com/color/96/mongodb.png" alt="mongodb"/>
+          mongoDB
+        </div>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="d-flex flex-wrap">
+      <div class="form-check border">
+        <div class="p-2 order-2">
+          <input type="radio" class="form-check-input mt-3" id="radio14" name="typescript" value="typescript">
+          <img width="48" height="48" src="https://www.svgrepo.com/show/354478/typescript-icon.svg" alt="typescript">
+          TypeScript
+        </div>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="text-center mb-5">
+      <button type="submit" class="btn btn-light border col-12 col-sm-6 col-md-4"> 
+        <img width="24" height="24" src="https://www.svgrepo.com/show/449115/install.svg" alt="install packages">
+        Install 
+      </button>
+    </div>
+  </section>
+
+</div>
+{% endblock content %}

@@ -67,8 +67,6 @@ class CreateVirtualMachineForm(forms.Form):
         for service in Services.objects.all().values():
             row = (service['choice'], service['description'])
             hardware_choices.append(row)
-
-        print(hardware_choices)
         
         return hardware_choices
 

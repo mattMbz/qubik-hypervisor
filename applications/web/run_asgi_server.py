@@ -5,7 +5,9 @@ proxy server, such as Nginx, to an ASGI/HTTP server application, such as UVicorn
 
 Communication via Unix Socket (http://unix:/path/to/socket.sock):
 In this approach, the proxy server (Nginx) redirects requests through a Unix socket, which is a mechanism 
-for interprocess communication on Unix systems. Communication using Unix sockets is usually faster and more secure than communication over the network due to its nature of communication between processes on the same system.
+for interprocess communication on Unix systems. Communication using Unix sockets is usually faster and 
+more secure than communication over the network due to its nature of communication between processes 
+on the same system.
 '''
 
 import os
