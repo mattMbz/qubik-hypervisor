@@ -7,6 +7,7 @@ module.exports = {
     mainPanel: './applications/web/typescript/mainPanel/main.ts',
     deleteVirtualMachine: './applications/web/typescript/deleteVirtualMachine/main.ts',
     resourceMonitor: './applications/web/typescript/resourceMonitor/main.ts',
+    createVMInteractionButton: './applications/web/typescript/createNewVirtualMachine/main.ts',
   },
   watch: true,
   watchOptions: {

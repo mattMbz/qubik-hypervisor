@@ -55,6 +55,11 @@
                   {{ form.applicationName.label }}
                 </label>
                 {{ form.applicationName }}
+                <div class="errorlist">
+                  {% for error in form.applicationName.errors %}
+                    <span class='text-danger'>{{ error }}</span>
+                  {% endfor %}
+                </div>
               </div>
               <div class="col-lg-6 col-sm-12">
                 <label for="version" class="form-label small">
@@ -69,33 +74,29 @@
 
             <label class="form-label small mt-3">{{ form.optradio.label }}</label>
 
-            {{ form.optradio }}
+            <div class="mb-5 small">
+              {{ form.optradio }}
+            </div>
 
-            {% if messages %}
-              {% for message in messages %}
-                <div 
-                  {% if "error" in message.tags %} 
-                    class="text text-danger mt-4" 
-                  {%else%}
-                    class="text text-{{ message.tags }} mt-4"
-                  {% endif %} 
-                >
-                  {{ message|safe }}
-                </div>
-              {% endfor %}
-            {% else %}
-                <div class="mt-3" style="height: 24px"></div>
-            {% endif %}
+            <hr>
 
-            <hr class='mt-5'>
-            <button type="submit" class="btn btn-primary ">Create new VM</button>
+            <section class="mt-3">
+              <button type="submit" class="btn btn-primary" id="create-vm-btn">
+                <span id="createNewBtn">Create new VM</span>
+              </button>
+              <span class="alert alert-info mx-4" id="wait" hidden>
+                <strong>Wait</strong> a moment please!
+              </span>
+            </section>
           </form>
 
         </div>
       </div>
     </div>
   </div>
+
 </div>
 
+<script src="{% static 'js/createVMInteractionButton/bundle.js' %}"></script>
 {% endblock content %}
 

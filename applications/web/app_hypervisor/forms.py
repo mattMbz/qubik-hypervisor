@@ -88,3 +88,11 @@ class CreateVirtualMachineForm(forms.Form):
         if not re.match(pattern, virtualMachineName):
             raise forms.ValidationError("ERROR: The virtual machine name should only contain letters (uppercase or lowercase and numbers with pattern (0-9) (Ex. 'my-vm1025', 'python-virtual-machine'). Try another name! ")
         return virtualMachineName
+    
+
+    def clean_applicationName(self):
+        applicationName = self.cleaned_data['applicationName']
+        pattern = r'^[a-zA-Z0-9]+([_-][a-zA-Z0-9]+)*$'
+        if not re.match(pattern, applicationName):
+            raise forms.ValidationError("Incorrect name")
+        return applicationName
