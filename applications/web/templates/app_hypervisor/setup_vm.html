@@ -1,20 +1,26 @@
 {% extends '../base.html' %}
+{% load static %}
 
 {% block title %}schedule tasks{% endblock title %}
 
 {% block content %}
 {% include '../navbar.html' %}
-<div class="container mt-5">
+<form class="container mt-5" method="post">
+
+  {% csrf_token %}
 
   <section>
       <h2>1. Choose your Virtual Machine</h2>
       <p>Afterward, proceed to the next step to install your development stack.</p>
-      <select class="form-select" id="sel2" name="sellist2">
-        <option disabled selected value="">-- Selecciona una opción --</option>
-        <option value="opcion1">vm001 - guarani3.18</option>
-        <option value="opcion2">vm002 - test-estudiantes</option>
-        <option value="opcion3">VmGabriel - rectorado</option>
+      
+      <select class="form-select mb-1" id="vm-selector" name="sellist2">
+        <option disabled selected value="">-- Choose an option --</option>
+        {% for vm in virtual_machines %}
+          <option value="opcion2">🖥️ {{vm}}-{{vm.app_name}}-{{vm.id}}</option>
+        {% endfor %}
       </select>
+      <div class="invalid-message"></div>
+
   </section>
    
   <section class="mt-5">
@@ -26,7 +32,7 @@
     <div class="d-flex flex-wrap">
       <div class="form-check border">
           <div class="p-2 order-2">
-            <input type="radio" class="form-check-input mt-3" id="radio1" name="webserver" value="nginx">
+            <input type="radio" class="form-check-input mt-3" id="radio1" name="webserver" value="nginx" checked>
             <img width="48" height="48" src="https://img.icons8.com/color/48/nginx.png" alt="nginx"/>
             Nginx
           </div>
@@ -45,7 +51,7 @@
     <div class="d-flex flex-wrap">
       <div class="form-check border">
           <div class="p-2 order-2">
-            <input type="radio" class="form-check-input mt-3" id="radio3" name="appserver" value="gunicorn">
+            <input type="radio" class="form-check-input mt-3" id="radio3" name="appserver" value="gunicorn" checked>
             <img width="48" height="48" src="https://www.svgrepo.com/show/353846/gunicorn.svg" alt="gunicorn"/>
             Gunicorn (WSGI)
           </div>
@@ -53,7 +59,7 @@
       <div class="form-check border">
         <div class="p-2 order-2">
           <input type="radio" class="form-check-input mt-3" id="radio4" name="appserver" value="uvicorn">
-          <img width="48" height="48" src="https://www.uvicorn.org/uvicorn.png" alt="uvicorn"/>
+          <img width="48" height="48" src="{% static 'images/stack/uvicorn.png' %}" alt="uvicorn">
           Uvicorn (ASGI)
         </div>
     </div>
@@ -64,7 +70,7 @@
     <div class="d-flex flex-wrap">
       <div class="form-check border">
         <div class="p-2 order-2">
-          <input type="radio" class="form-check-input mt-3" id="radio5" name="backend" value="django">
+          <input type="radio" class="form-check-input mt-3" id="radio5" name="backend" value="django" checked>
           <img width="48" height="48" src="https://img.icons8.com/external-tal-revivo-shadow-tal-revivo/96/external-django-a-high-level-python-web-framework-that-encourages-rapid-development-logo-shadow-tal-revivo.png" alt="external-django-a-high-level-python-web-framework-that-encourages-rapid-development-logo-shadow-tal-revivo"/>
           Django
         </div>
@@ -146,12 +152,15 @@
     <hr>
 
     <div class="text-center mb-5">
-      <button type="submit" class="btn btn-light border col-12 col-sm-6 col-md-4"> 
+      <button type="submit" class="btn btn-light border col-12 col-sm-6 col-md-4" id="install"> 
         <img width="24" height="24" src="https://www.svgrepo.com/show/449115/install.svg" alt="install packages">
         Install 
       </button>
     </div>
   </section>
 
-</div>
+</form>
+
+<script src="{% static 'js/setupVirtualMachine/bundle.js' %}"></script>
+
 {% endblock content %}

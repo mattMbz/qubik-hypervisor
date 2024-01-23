@@ -22,9 +22,9 @@ abstract class HttpRequestHandler {
   
         let requestType: any = {};
 
-        requestType = {method: this.method, headers: headers}
+        requestType = {method: this.method, headers: headers};
 
-        if(this.method != 'GET') requestType['body'] = body
+        if(this.method != 'GET') requestType['body'] = JSON.stringify(body);
 
         const res = await fetch(endpoint, requestType);
     
@@ -33,7 +33,7 @@ abstract class HttpRequestHandler {
         if (res.status !== 200) {
             console.log(data.message , data.status);
         } else {
-            // console.log(data);
+            console.log(data);
             return data;
         }
     }
@@ -75,6 +75,8 @@ export class Post extends HttpRequestHandler {
             endpoint = process.env.START_VM_ENDPOINT as string;
         } else if (action=='shutdown') {
             endpoint = process.env.SHUTDOWN_VM_ENDPOINT as string;
+        } else if (action=='setup'){
+            endpoint = process.env.SETUP_VM_ENDPOINT as string;
         }
 
         const buildEndpoint = (parameter: any) => `${HTTPSERVER}/${endpoint}/${parameter}`;
@@ -84,7 +86,7 @@ export class Post extends HttpRequestHandler {
     public async request(body: any, parameter?: string) {
         const endpoint = this.getEndpoint(body.action, parameter);
         const response = await this.makeRequest(body, endpoint)
-        console.log(`Recibido <- ${response}`);
+        console.log(response);
     }
 
 } /**End_class */

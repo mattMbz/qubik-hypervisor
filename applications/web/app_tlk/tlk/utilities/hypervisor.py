@@ -1,5 +1,5 @@
 # Python Utitlities
-import libvirt, os
+import libvirt, os, time
 from dotenv import load_dotenv
 
 # TLK imports
@@ -45,9 +45,8 @@ class Hypervisor:
                 '1': 'debianBase-1vcpu-512mb-2gb-vm', #1 CPU | 512 MB (RAM) |  2 GB (Disk)
                 '2': 'debianBase-2vcpu-768mb-4gb-vm', #2 CPU | 768 MB (RAM) |  4 GB (Disk)
                 '3': 'debianBase-3vcpu-768mb-4gb-vm', #3 CPU | 768 MB (RAM) |  4 GB (Disk)
-                '4': 'debianBase-2vcpu-768mb-4gb-nginx-python3',
-                '5': 'debianBase-4vcpu-2gb-8gb-vm',   #4 CPU |   2 GB (RAM) |  8 GB (Disk)
-                '6': 'debianBase-4vcpu-4gb-10gb-vm',  #4 CPU |   4 GB (RAM) | 10 GB (Disk)
+                '4': 'debianBase-4vcpu-2gb-8gb-vm',   #4 CPU |   2 GB (RAM) |  8 GB (Disk)
+                '5': 'debianBase-4vcpu-4gb-10gb-vm',  #4 CPU |   4 GB (RAM) | 10 GB (Disk)
             },
             'Alpine Linux': {
                 '1': 'alpineBase-1vcpu-256mb-1gb-vm', #1 CPU | 256 MB (RAM) | 1 GB (Disk)
@@ -58,17 +57,20 @@ class Hypervisor:
             },
        }
 
-       if (operating_system=='Debian Linux' and (resource_options=='2' or resource_options=='4')):
+       if (operating_system=='Debian Linux' and resource_options=='2'):
             clone_option = (clone_options[operating_system][resource_options])
+
+            print(f'CREANDO VM ...')
+            # time.sleep(10)
             print(f'clone.sh {clone_option} {vmname}')
 
             # Execute process from bash
             executeFile(PATH, 'clone-vm.sh', clone_option, vmname)
 
             # Updating nginx locations for VM applications
-            ipv4 = executeFileWithReturn(PATH, 'get-vm-ipv4.sh', vmname)
-            self.nginx_handler.createNginxLocation(username, ipv4, application_name, vmname)
-            executeShellCommand("nginx -s reload")
+            # ipv4 = executeFileWithReturn(PATH, 'get-vm-ipv4.sh', vmname)
+            # self.nginx_handler.createNginxLocation(username, ipv4, application_name, vmname)
+            # executeShellCommand("nginx -s reload")
 
 
        elif (operating_system=='Alpine Linux' and ( resource_options=='2' or resource_options=='3' )):

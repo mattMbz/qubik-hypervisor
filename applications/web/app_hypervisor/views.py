@@ -153,7 +153,6 @@ def delete(request, vm_uuid=None):
         user = request.user
 
         try:
-            #virtual_machine = VirtualMachine.objects.get(id=uuid.UUID(vm_uuid))
             virtual_machine = VirtualMachine.objects.get(id=vm_uuid)
             
             if virtual_machine.name in hypervisor.getNamesOfRunningVM():
