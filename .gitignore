@@ -1,4 +1,5 @@
 ### Qubik Hypervisor ###
+ansible/
 emulations/
 isolation/
 security/
