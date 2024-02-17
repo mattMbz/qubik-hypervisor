@@ -13,7 +13,6 @@ class SetupVirtualMachine(View):
 
     def post(self, request, vm_uuid):
         data = json.loads(request.body)
-        print(data)
         context = {
             'status': True,
             'content': 'successfully'
@@ -32,4 +31,3 @@ class SetupVirtualMachine(View):
             }
             return no_cache_render(request, 'app_hypervisor/setup_vm.html', context=context)
         
-        #return no_cache_render(request, 'app_hypervisor/setup_vm.html', context=context)

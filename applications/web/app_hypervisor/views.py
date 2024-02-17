@@ -56,12 +56,6 @@ def create_virtual_machine(request):
             user = request.user
 
             if user.is_authenticated:
-                # Haz algo con los datos, como guardarlos en la base de datos
-                print(f'vm name: {virtual_machine_name}')
-                print(f'app name: {application_name}')
-                print(f'version: {version}')
-                print(f'hardware: {hardware}')
-
                 new_vm_resources = Resources.objects.create(
                     os=chosen_vm_resources[0],
                     vcpu=chosen_vm_resources[1],
@@ -111,7 +105,6 @@ def start(request, vm_uuid):
     virtual_machine = VirtualMachine.objects.get(id=vm_uuid)
     virtual_machine.state = True
     virtual_machine.save()
-    print(f'START -> {virtual_machine}')
     hypervisor.startVM(virtual_machine.name)
 
     return JsonResponse({'status':f'{vm_uuid}'})
@@ -170,7 +163,6 @@ def delete(request, vm_uuid=None):
                 # Remove from database
                 virtual_machine.delete()
 
-                print(f'Deleted >> {vm_uuid}')
                 return JsonResponse({'status':f'{vm_uuid}', 'message':'Virtual Machine deleted successfully'})
         
         except VirtualMachine.DoesNotExist:

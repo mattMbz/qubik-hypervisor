@@ -60,10 +60,6 @@ class Hypervisor:
        if (operating_system=='Debian Linux' and resource_options=='2'):
             clone_option = (clone_options[operating_system][resource_options])
 
-            print(f'CREANDO VM ...')
-            # time.sleep(10)
-            print(f'clone.sh {clone_option} {vmname}')
-
             # Execute process from bash
             executeFile(PATH, 'clone-vm.sh', clone_option, vmname)
 
@@ -75,7 +71,6 @@ class Hypervisor:
 
        elif (operating_system=='Alpine Linux' and ( resource_options=='2' or resource_options=='3' )):
             clone_option = (clone_options[operating_system][resource_options])
-            print(f'clone.sh {clone_option} {vmname}')
 
             # Execute process from bash
             executeFile(PATH, 'clone-vm.sh', clone_option, vmname)
@@ -112,9 +107,6 @@ class Hypervisor:
                print('The VM is running. Please Turn-off first !')
            else:
                 # Execute process from bash
-                print(f"vmname: {vmname}")
-                print(f"vm_id: {vm_id}")
-                print(f"Username: {username}")
                 self.nginx_handler.deleteNginxLocation(vm_id, username)
                 executeShellCommand("nginx -s reload")
                 executeFile(PATH, 'remove-vm.sh', vmname)
