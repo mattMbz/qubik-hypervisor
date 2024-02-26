@@ -16,7 +16,7 @@
       <select class="form-select mb-1" id="vm-selector" name="sellist2">
         <option disabled selected value="">-- Choose an option --</option>
         {% for vm in virtual_machines %}
-          <option value="opcion2">🖥️ {{vm}}-{{vm.app_name}}-{{vm.id}}</option>
+          <option value="opcion2">🖥️ {{vm}} | {{vm.app_name}} | {{vm.id}}</option>
         {% endfor %}
       </select>
       <div class="invalid-message"></div>

@@ -46,37 +46,35 @@ export class HandlerToMainPanel {
     public throttle(func: any, delay: any) {
 
         return () => {
-          const currentTime = Date.now();
-          if (currentTime - this.lastExecutionTime >= delay) {
-            // console.log(this.lastExecutionTime);
-            // console.log(currentTime);
-            console.log(currentTime - this.lastExecutionTime);
-            console.log(delay);
-            func();
-            this.lastExecutionTime = currentTime;
+            const currentTime = Date.now();
+            if (currentTime - this.lastExecutionTime >= delay) {
+                console.log(currentTime - this.lastExecutionTime);
+                console.log(delay);
+                func();
+                this.lastExecutionTime = currentTime;
 
-          } else {
-            console.log("NO EJECUTO NADA");
-          }
+            } else {
+                console.log("NO EJECUTO NADA");
+            }
         };
     }
 
     public addEventListenerForVMResources() {
 
-        this.virtualMachineComponents.forEach( component => {
+        this.virtualMachineComponents.forEach(component => {
             const WEBSOCKET_SERVER_VM: string = process.env.WEBSOCKET_SERVER_VM as string;
             const dropdownMenu = document.querySelector(`#dropdown-${component.id}`);
 
 
             const options = {
-                root: null, 
+                root: null,
                 rootMargin: '0px',
-                threshold: 0, 
+                threshold: 0,
             };
-    
+
             // Create an Intersection Observer with a callback function
-            const observer = new IntersectionObserver( (entries) => {
-            
+            const observer = new IntersectionObserver((entries) => {
+
                 entries.forEach((entry) => {
 
                     this.webSocketForVCPU.close();
@@ -85,33 +83,33 @@ export class HandlerToMainPanel {
 
                     if (entry.isIntersecting) {
                         if (component.querySelector(`.status-${component.id} .badge`)?.textContent == 'Running') {
-                            
+
                             const connectWebSocket = () => {
                                 this.webSocketForVCPU.connectToWebSocket(WEBSOCKET_SERVER_VM, new HtmlCPUMonitor(component.id));
                                 this.webSocketForVMemory.connectToWebSocket(WEBSOCKET_SERVER_VM, new HtmlVRamMonitor(component.id));
                                 this.webSocketForVDisk.connectToWebSocket(WEBSOCKET_SERVER_VM, new HtmlVDiskMonitor(component.id));
                                 this.openSockets = true;
-                                
+
                                 const waitForSocketOpened = (socket: any, targetState: any, callback: any) => {
                                     if (socket.readyState === targetState) {
                                         callback();
                                     } else {
-                                        setTimeout( () => waitForSocketOpened(socket, targetState, callback), 100);
+                                        setTimeout(() => waitForSocketOpened(socket, targetState, callback), 100);
                                     }
                                 }
-                                
+
                                 waitForSocketOpened(this.webSocketForVCPU.socket, WebSocket.OPEN, () => {
                                     this.webSocketForVCPU.sendMessage(`vcpu-${component.id}`);
                                 });
                                 waitForSocketOpened(this.webSocketForVMemory.socket, WebSocket.OPEN, () => {
                                     this.webSocketForVMemory.sendMessage(`vram-${component.id}`);
-    
+
                                 });
                                 waitForSocketOpened(this.webSocketForVDisk.socket, WebSocket.OPEN, () => {
                                     this.webSocketForVDisk.sendMessage(`vdisk-${component.id}`);
                                 });
                             }
-                            
+
                             const throttleConnectWebSocket = this.throttle(connectWebSocket, 3000);
 
                             throttleConnectWebSocket();
@@ -126,10 +124,10 @@ export class HandlerToMainPanel {
                             this.openSockets = false;
                         }
                     }
-                } 
-            );
-        }, options );
-    
+                }
+                );
+            }, options);
+
             // Observe the dropdown-menu element where we will see the data
             if (dropdownMenu) {
                 observer.observe(dropdownMenu);
@@ -153,7 +151,7 @@ abstract class HtmlVirtualMachineMonitor {
 
 
 class HtmlCPUMonitor extends HtmlVirtualMachineMonitor {
-    
+
     private _htmlCpuMonitor: any;
 
     constructor(virtualMachineId: string) {
@@ -168,17 +166,17 @@ class HtmlCPUMonitor extends HtmlVirtualMachineMonitor {
     }
 
     public update(data: any): void {
-        
+
         let percentages = 'Not available';
 
-        if(data.message != 'not_available') {
+        if (data.message != 'not_available') {
             const vcpusArray = data;
             percentages = '';
             for (let key in vcpusArray) {
                 percentages = percentages.concat(`${key}:[${vcpusArray[key]}%] `);
             }
         }
-        this.cpu.vcpusArray.textContent=`${percentages}`;
+        this.cpu.vcpusArray.textContent = `${percentages}`;
     }
 
 }
@@ -193,7 +191,7 @@ class HtmlVRamMonitor extends HtmlVirtualMachineMonitor {
         this._htmlMemoryMonitor = this._htmlDropDownMenu?.querySelector('.vram');
     }
 
-    get memory(){
+    get memory() {
         return {
             'used': this._htmlMemoryMonitor.querySelector(".vram-used"),
             'percentage': this._htmlMemoryMonitor.querySelector(".vram-percent")
@@ -227,7 +225,7 @@ class HtmlVDiskMonitor extends HtmlVirtualMachineMonitor {
     }
 
     public update(data: any): void {
-        
+
         let used = 'Not available';
 
         if (data.message != 'not_available') {

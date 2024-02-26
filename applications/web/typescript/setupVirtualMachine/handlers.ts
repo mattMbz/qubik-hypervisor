@@ -101,7 +101,7 @@ export class VirtualMachineSetup {
                 this.virtualMachineSelector.innerMessage("* You must choose a virtual machine");
                 this.virtualMachineSelector.setClassVmSelectorInvalidMessage('invalid-message');
             } else {
-                const virtualMachine = this.virtualMachineSelector.getValue().split('-');
+                const virtualMachine = this.virtualMachineSelector.getValue().split(' | ');
                 const virtualMachineName = virtualMachine[0].split(" ");
                 const virtualMachineObject = {
                     "vmName": virtualMachineName[1],

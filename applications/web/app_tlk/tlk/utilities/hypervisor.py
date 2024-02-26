@@ -60,17 +60,16 @@ class Hypervisor:
        if (operating_system=='Debian Linux' and resource_options=='2'):
             clone_option = (clone_options[operating_system][resource_options])
 
-            print(f'CREANDO VM ...')
-            # time.sleep(10)
+            time.sleep(3)
             print(f'clone.sh {clone_option} {vmname}')
 
             # Execute process from bash
             executeFile(PATH, 'clone-vm.sh', clone_option, vmname)
 
             # Updating nginx locations for VM applications
-            # ipv4 = executeFileWithReturn(PATH, 'get-vm-ipv4.sh', vmname)
-            # self.nginx_handler.createNginxLocation(username, ipv4, application_name, vmname)
-            # executeShellCommand("nginx -s reload")
+            ipv4 = executeFileWithReturn(PATH, 'get-vm-ipv4.sh', vmname)
+            self.nginx_handler.createNginxLocation(username, ipv4, application_name, vmname)
+            executeShellCommand("nginx -s reload")
 
 
        elif (operating_system=='Alpine Linux' and ( resource_options=='2' or resource_options=='3' )):
@@ -79,6 +78,11 @@ class Hypervisor:
 
             # Execute process from bash
             executeFile(PATH, 'clone-vm.sh', clone_option, vmname)
+
+            # Updating nginx locations for VM applications
+            ipv4 = executeFileWithReturn(PATH, 'get-vm-ipv4.sh', vmname)
+            self.nginx_handler.createNginxLocation(username, ipv4, application_name, vmname)
+            executeShellCommand("nginx -s reload")
 
        else:
             print('Not implemented yet !')

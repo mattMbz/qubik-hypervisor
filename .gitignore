@@ -39,6 +39,9 @@ bin/
 pkg/
 src/bin/
 
+### Deploy ###
+bare_repositories/
+
 #
 # Binaries for programs and plugins
 *.exe
