@@ -13,6 +13,9 @@ class SetupVirtualMachine(View):
 
     def post(self, request, vm_uuid):
         data = json.loads(request.body)
+        print('####')
+        print(data)
+        print('####')
         context = {
             'status': True,
             'content': 'successfully'
