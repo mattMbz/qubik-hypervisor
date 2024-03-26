@@ -30,7 +30,7 @@ package.json
 #.env
 .env.development
 .env.production
-setenv.sh
+# setenv.sh
 tsconfig.private.json
 
 ### Go ###
