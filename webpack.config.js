@@ -16,7 +16,7 @@ module.exports = {
   },
   output: {
     filename: '[name]/bundle.js',
-    path: path.resolve(__dirname, './applications/web/static/js'),
+    path: path.resolve(__dirname, './applications/web/qubik_static_files/js'),
     libraryTarget: 'umd',
   },
   module: {
